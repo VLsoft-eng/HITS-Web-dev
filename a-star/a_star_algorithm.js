@@ -1,5 +1,14 @@
 document.addEventListener("DOMContentLoaded", function() {
 
+    let slider = document.getElementById("range");
+    let output = document.getElementById("value");
+
+    output.innerHTML = slider.value;
+
+    slider.oninput = function() {
+        output.innerHTML = this.value;
+    }
+
     class Node {
         constructor(row, column, parent) {
             this.row = row;
@@ -36,62 +45,81 @@ document.addEventListener("DOMContentLoaded", function() {
         return {mazeMatrix, start, end};
     }
 
+    function visualizePath(path, cells, N) {
+        path.reverse();
+        let i = 0;
+        function visualize() {
+            if (i < path.length) {
+                setTimeout(function() {
+                    cells[path[i].row * N + path[i].column].classList.remove('visited');
+                    cells[path[i].row * N + path[i].column].classList.remove('spotted');
+                    cells[path[i].row * N + path[i].column].classList.add('path');
+                    i++;
+                    visualize();
+                }, slider.value * 2);
+            }
+        }
+        visualize();
+    }
+
     function a_star() {
         const N = 20;
         const cells = document.querySelectorAll('.cell');
-        const { mazeMatrix, start, end } = matrixInit([],cells);
+        const {mazeMatrix, start, end} = matrixInit([], cells);
+
+        cells.forEach(cell => {
+            cell.classList.remove('spotted');
+            cell.classList.remove('visited');
+            cell.classList.remove('path');
+        });
 
         let queue = [];
-        let visited =[];
+        let visited = [];
         queue.push(start);
 
-        function visualize() {
-            setTimeout(function() {
-        if (queue.length > 0){
+        function visualizeAlg() {
             let current = queue[0];
-            let currentIndex = 0;
 
             // вывод пути
             if (current.row === end.row && current.column === end.column) {
+                let path = [];
                 let currentNode = current;
-                while (currentNode.parent !== null){
-                    cells[currentNode.row * N + currentNode.column].classList.remove('visited');
-                    cells[currentNode.row * N + currentNode.column].classList.remove('spotted');
-                    cells[currentNode.row * N + currentNode.column].classList.add('path');
-                    currentNode=currentNode.parent;
+                while (currentNode.parent !== null) {
+                    path.push(currentNode);
+                    currentNode = currentNode.parent;
                 }
+                visualizePath(path, cells, N);
                 return;
             }
 
-            queue.splice(currentIndex,1);
             visited.push(current);
 
             cells[current.row * N + current.column].classList.remove('spotted');
             cells[current.row * N + current.column].classList.add('visited');
 
             const neighbors = [];
-            const {row,column} = current;
+            const {row, column} = current;
 
             const moves = [
-                {row : 0, column : -1},
-                {row : 0, column : 1},
-                {row : -1, column : 0},
-                {row : 1, column : 0}
-            ]
+                {row: 0, column: -1},
+                {row: 0, column: 1},
+                {row: -1, column: 0},
+                {row: 1, column: 0}
+            ];
 
-            for (const move of moves){
+            for (const move of moves) {
                 let neighbor = new Node(row + move.row, column + move.column, current);
 
-                if (neighbor.row > 0 && neighbor.row < N && neighbor.column > 0 && neighbor.column < N){
-                    if (mazeMatrix[neighbor.row][neighbor.column].type !== 1){
+                if (neighbor.row >= 0 && neighbor.row < N && neighbor.column >= 0 && neighbor.column < N) {
+                    if (mazeMatrix[neighbor.row][neighbor.column].type !== 1) {
                         neighbors.push(neighbor);
                         cells[neighbor.row * N + neighbor.column].classList.add('spotted');
                     }
                 }
             }
 
-            for (const neighbor of neighbors){
-                if (visited.includes(neighbor)){
+            for (const neighbor of neighbors) {
+                if (visited.includes(neighbor)) {
                     continue;
                 }
                 neighbor.g = current.g + 1;
@@ -101,15 +129,11 @@ document.addEventListener("DOMContentLoaded", function() {
                 queue.push(neighbor);
             }
 
-                queue.sort((a, b) => a.f - b.f);
-                visualize();
-            }
-        }, 0);
+            queue.splice(0, 1);
+            queue.sort((a, b) => a.f - b.f);
+            setTimeout(visualizeAlg, slider.value);
+        }
+        visualizeAlg();
     }
-
-    // Начинаем визуализацию алгоритма
-    visualize();
-}
-
     document.getElementById('start').addEventListener('click', a_star);
 });
