@@ -30,6 +30,11 @@ body {
     width: 260px;
 }
 
+.sidebar.load {
+    width: 70px;
+    transition: .0s;
+}
+
 .sidebar .logo-menu {
     display: flex;
     align-items: center;
@@ -50,6 +55,11 @@ body {
     transition-delay: .1s;
 }
 
+.sidebar.load .logo-menu .logo {
+    opacity: 0;
+    transition-delay: .0s;
+}
+
 
 .sidebar .logo-menu .toggle-btn {
     position: absolute;
@@ -67,6 +77,11 @@ body {
 
 .sidebar.active .logo-menu .toggle-btn {
     left: 85%;
+}
+
+.sidebar.load .logo-menu .toggle-btn {
+    left: 46%;
+    transition: .0s;
 }
 
 .sidebar .list {
@@ -110,6 +125,10 @@ body {
     opacity: 1;
     pointer-events: auto;
     transition-delay: calc(.1s * var(--i));
+}
+
+.sidebar.load .link-name {
+    opacity: 0;
 }
 
 .list .list-item a img {
