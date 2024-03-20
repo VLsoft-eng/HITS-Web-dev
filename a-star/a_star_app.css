@@ -17,7 +17,7 @@ body {
     position: relative;
     margin: 0 auto;
     height: 500px;
-    width: 750px;
+    width: 500px;
     display: flex;
     border-radius: 10px;
     background-color: rgba(255, 255, 255, .2);
@@ -29,34 +29,46 @@ body {
     display: grid;
     justify-content: center;
     align-content: center;
-    margin-left: 5px;
     height: 500px;
-    width: 750px;
-    grid-template-rows: repeat(24, 20px);
-    grid-template-columns: repeat(37, 20px);
+    width: 500px;
+    grid-template-rows: repeat(20, 25px);
+    grid-template-columns: repeat(20, 25px);
 }
 
 .cell {
-    width: 20px;
-    height: 20px;
+    width: 25px;
+    height: 25px;
     border-radius: 3px;
-    border: 1px solid #000;
+    border: 1px solid #111111;
+}
+
+.cell.spotted{
+    background-color: greenyellow;
+    opacity: 50%;
 }
 
 .cell.wall {
     background-color: navajowhite;
 }
 
+.cell.start{
+    background-color: green;
+}
+
+.cell.end{
+    background-color: red;
+}
 
 button{
     background-color: #111111;
     border-radius: 10px;
-    margin-left: 50px;
+    margin-left: 15px;
     margin-bottom: 5px;
     cursor: pointer;
 }
 
 button:hover{
+    background-color: gray;
     box-shadow: 0 0 5px #727272,
     0 0 5px #b7b7b7,
     0 0 10px #cecece,

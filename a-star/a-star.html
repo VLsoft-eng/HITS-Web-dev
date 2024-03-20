@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>A*</title>
-    <link rel="stylesheet" href="a-star-app.css">
+    <link rel="stylesheet" href="a_star_app.css">
     <link rel="stylesheet" href="/UI/navbar/navbar.css">
-
 </head>
 <body>
 <nav class="sidebar active load">
@@ -81,15 +80,17 @@
 
 <div id="mazeBlock">
     <div id="maze"></div>
-    <script src="maze.js"></script>
     <div>
-        <button><img src="../source/a-star_images/auto.png" alt="Кнопка «button»"></button>
-        <button><img src="../source/a-star_images/set.png" alt="Кнопка «button»"></button>
-        <button><img src="../source/a-star_images/start.png" alt="Кнопка «button»"></button>
-        <button id="delete" onclick="clearMaze();"><img src="../source/a-star_images/delete.png" alt="Кнопка «button»"></button>
+        <button id="start"><img src="../source/a-star_images/start.png" alt="Кнопка «START»"></button>
+        <button><img src="../source/a-star_images/auto.png" alt="Кнопка «AUTOGENERATE MAZE»"></button>
+        <button id="add"><img src="../source/a-star_images/set.png" alt="Кнопка «ADD START AND FINISH»"></button>
+        <button id="delete"><img src="../source/a-star_images/delete.png" alt="Кнопка «DELETE FIELD»"></button>
     </div>
 </div>
 
+
+<script src="maze.js"></script>
+<script src="a_star_algorithm.js"></script>
 
 </body>
 </html>
