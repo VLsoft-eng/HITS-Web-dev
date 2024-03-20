@@ -42,9 +42,18 @@ body {
     border: 1px solid #111111;
 }
 
+.cell.path{
+    background-color: #007aff;
+}
+
 .cell.spotted{
     background-color: greenyellow;
     opacity: 50%;
+}
+
+.cell.visited{
+    background-color: #03ad03;
+    opacity: 75%;
 }
 
 .cell.wall {

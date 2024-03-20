@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function() {
             cell.classList.remove('start');
             cell.classList.remove('end');
             cell.classList.remove('spotted');
-
+            cell.classList.remove('visited');
+            cell.classList.remove('path');
         });
     }
 
@@ -35,6 +36,9 @@ document.addEventListener("DOMContentLoaded", function() {
         cells.forEach(cell => {
             cell.classList.remove('start');
             cell.classList.remove('end');
+            cell.classList.remove('spotted');
+            cell.classList.remove('visited');
+            cell.classList.remove('path');
         });
     }
 
