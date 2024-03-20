@@ -1,4 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
 body {
     background-color: #111111;
-    margin: 0;
+}
+
+#header{
+    height: 15vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: azure;
+}
+
+#drawing_panel {
+    width: 600px;
+    height: 600px;
+    border:1px solid teal;
+    display: flex;
+    justify-content: center;
+}
+
+#cluster_canvas {
+    background: rgba(255, 255, 255, .2);
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+    display: block;
+    border: 1px solid #ccc;
+    cursor: crosshair;
 }
