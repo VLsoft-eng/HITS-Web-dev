@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     cells[path[i].row * N + path[i].column].classList.add('path');
                     i++;
                     visualize();
-                }, slider.value * 2);
+                }, 100 - slider.value);
             }
         }
         visualize();
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     let neighbor = neighbors[i];
 
                     if (visited[neighbor.row][neighbor.column] !== 1) {
-                        console.log(visited[neighbor.row][neighbor.column],neighbor.row,neighbor.column)
+
                         let newG = current.g + 1;
 
                         if (!queue.includes(neighbor)) {
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     }
                 }
             }
-            setTimeout(visualizeAlg, slider.value);
+            setTimeout(visualizeAlg, 100 - slider.value);
         }
         visualizeAlg();
     }

@@ -6,107 +6,148 @@ document.addEventListener("DOMContentLoaded", function() {
     slider.oninput = function() {
         output.innerHTML = this.value;
     }
-    class Coordinate{
-        constructor(row,col) {
+    class Point {
+        constructor(row, column) {
             this.row = row;
-            this.col = col;
+            this.column = column;
+            this.clear = false;
+        }
+
+        makeClear() {
+            cells[this.row * N + this.column].classList.remove('wall');
+            this.clear = true;
+        }
+
+        isClear() {
+            return this.clear;
+        }
+
+        makeWall() {
+            cells[this.row * N + this.column].classList.add('wall');
+            this.clear = false;
+        }
+        isWall() {
+            return !this.clear;
         }
     }
 
+    function random(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function mazeInit(N) {
+        const maze = [];
+        for (let i = 0; i < N; i++) {
+            maze[i] = [];
+            for (let j = 0; j < N; j++) {
+                maze[i][j] = new Point(i, j);
+            }
+        }
+        return maze;
+    }
+
     function prima() {
-        const N = 20;
-        const cells = document.querySelectorAll('.cell');
+        // очистка поля
         cells.forEach(cell => {
-            cell.classList.add('wall');
-            cell.classList.remove('start');
-            cell.classList.remove('add');
             cell.classList.remove('spotted');
             cell.classList.remove('visited');
             cell.classList.remove('path');
+            cell.classList.remove('start');
             cell.classList.remove('end');
-        })
+        });
 
-        // прима
-        let point = new Coordinate(Math.floor(Math.random() * 20), Math.floor(Math.random() * 20));
-        cells[point.row * N + point.col].classList.remove('wall');
-        cells[point.row * N + point.col].classList.add('start');
+        const maze = mazeInit(N);
 
+        for (let i = 0; i < N; i++) {
+            for (let j = 0; j < N; j++) {
+                maze[i][j].makeWall(i, j);
+            }
+        }
+
+        let currentPoint = new Point(random(0, N), random(0, N));
+        maze[currentPoint.row][currentPoint.column].makeClear();
+        cells[currentPoint.row * N + currentPoint.column].classList.add('start');
 
         let queue = [];
-
-        if (point.col - 2 >= 0) {
-            queue.push(new Coordinate(point.row, point.col - 2));
+        // добавляем наследников стартовой точки в очередь
+        if (currentPoint.row - 2 >= 0) {
+            queue.push(new Point(currentPoint.row - 2, currentPoint.column));
         }
-        if (point.col + 2 < N) {
-            queue.push(new Coordinate(point.row, point.col + 2));
+        if (currentPoint.row + 2 < N) {
+            queue.push(new Point(currentPoint.row + 2, currentPoint.column));
         }
-        if (point.row - 2 >= 0) {
-            queue.push(new Coordinate(point.row - 2, point.col));
+        if (currentPoint.column - 2 >= 0) {
+            queue.push(new Point(currentPoint.row, currentPoint.column - 2));
         }
-        if (point.row + 2 < N) {
-            queue.push(new Coordinate(point.row + 2, point.col));
+        if (currentPoint.column + 2 < N) {
+            queue.push(new Point(currentPoint.row, currentPoint.column + 2));
         }
 
         function visualizePrima() {
             if (queue.length === 0 ){
-                cells[point.row * N + point.col].classList.add('end');
+                cells[currentPoint.row * N + currentPoint.column].classList.add('end');
                 return;
             }
+            // обработка наследников
             if (queue.length > 0) {
-                let index = Math.floor(Math.random() * queue.length);
-                point = new Coordinate(queue[index].row, queue[index].col);
-                cells[point.row * N + point.col].classList.remove('wall');
-
+                let index = random(0, queue.length)
+                currentPoint.row = queue[index].row;
+                currentPoint.column = queue[index].column;
+                maze[currentPoint.row][currentPoint.column].makeClear();
                 queue.splice(index, 1);
 
-                let direction = ['up', 'down', 'left', 'right'];
-                while (direction.length > 0) {
-                    let directionIndex = Math.floor(Math.random() * direction.length);
-                    switch (direction[directionIndex]) {
-                        case 'top':
-                            if (point.col - 2 >= 0 && !cells[point.row * N + point.col - 2].classList.contains('wall')) {
-                                cells[point.row * N + point.col - 1].classList.remove('wall');
-                                direction = [];
+                let directions = ['up', 'down', 'left', 'right'];
+                while (directions.length > 0) {
+                    let directionIndex = random(0,directions.length);
+                    let direction = directions[directionIndex];
+                    switch (direction) {
+                        case 'up':
+                            if (currentPoint.column - 2 >= 0 && maze[currentPoint.row][currentPoint.column - 2].isClear()) {
+                                maze[currentPoint.row][currentPoint.column - 1].makeClear();
+                                directions = [];
                             }
                             break;
                         case 'down':
-                            if (point.col + 2 < N && !cells[point.row * N + point.col + 2].classList.contains('wall')) {
-                                cells[point.row * N + point.col + 1].classList.remove('wall')
-                                direction = [];
+                            if (currentPoint.column + 2 < N && maze[currentPoint.row][currentPoint.column + 2].isClear()) {
+                                maze[currentPoint.row][currentPoint.column + 1].makeClear();
+                                directions = [];
                             }
                             break;
                         case 'left':
-                            if (point.row - 2 >= 0 && !cells[(point.row - 2) * N + point.col].classList.contains('wall')) {
-                                cells[(point.row - 1) * N + point.col].classList.remove('wall');
-                                direction = [];
+                            if (currentPoint.row - 2 >= 0 && maze[currentPoint.row - 2][currentPoint.column].isClear()) {
+                                maze[currentPoint.row - 1][currentPoint.column].makeClear();
+                                directions = [];
                             }
                             break;
                         case 'right':
-                            if (point.row + 2 < N && !cells[(point.row + 2) * N + point.col].classList.contains('wall')) {
-                                cells[(point.row + 1) * N + point.col].classList.remove('wall');
-                                direction = []
+                            if (currentPoint.row + 2 < N && maze[currentPoint.row + 2][currentPoint.column].isClear()) {
+                                maze[currentPoint.row + 1][currentPoint.column].makeClear();
+                                directions = [];
                             }
                             break;
                     }
-                    direction.splice(directionIndex, 1);
+                    directions.splice(directionIndex, 1);
                 }
-
-                if (point.col - 2 >= 0 && cells[point.row * N + point.col - 2].classList.contains('wall')) {
-                    queue.push(new Coordinate(point.row, point.col - 2));
+                if (currentPoint.column - 2 >= 0 && maze[currentPoint.row][currentPoint.column - 2].isWall()) {
+                    queue.push(new Point(currentPoint.row, currentPoint.column - 2));
                 }
-                if (point.col + 2 < N && cells[point.row * N + point.col + 2].classList.contains('wall')) {
-                    queue.push(new Coordinate(point.row, point.col + 2));
+                if (currentPoint.column + 2 < N && maze[currentPoint.row][currentPoint.column + 2].isWall()) {
+                    queue.push(new Point(currentPoint.row, currentPoint.column + 2));
                 }
-                if (point.row - 2 >= 0 && cells[(point.row - 2) * N + point.col].classList.contains('wall')) {
-                    queue.push(new Coordinate(point.row - 2, point.col));
+                if (currentPoint.row - 2 >= 0 && maze[currentPoint.row - 2][currentPoint.column].isWall()) {
+                    queue.push(new Point(currentPoint.row - 2, currentPoint.column));
                 }
-                if (point.row + 2 < N && cells[(point.row + 2) * N + point.col].classList.contains('wall')) {
-                    queue.push(new Coordinate(point.row + 2, point.col));
+                if (currentPoint.row + 2 < N && maze[currentPoint.row + 2][currentPoint.column].isWall()) {
+                    queue.push(new Point(currentPoint.row + 2, currentPoint.column));
                 }
             }
-            setTimeout(visualizePrima, slider.value);
+            setTimeout(visualizePrima, 100 - slider.value);
         }
         visualizePrima();
     }
+
+    const cells = document.querySelectorAll('.cell');
+    const N = 20;
+
     document.getElementById('auto').addEventListener('click', prima);
 });
