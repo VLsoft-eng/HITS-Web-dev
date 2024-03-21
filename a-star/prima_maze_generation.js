@@ -29,6 +29,8 @@ document.addEventListener("DOMContentLoaded", function() {
         // прима
         let point = new Coordinate(Math.floor(Math.random() * 20), Math.floor(Math.random() * 20));
         cells[point.row * N + point.col].classList.remove('wall');
+        cells[point.row * N + point.col].classList.add('start');
+
 
         let queue = [];
 
@@ -46,6 +48,10 @@ document.addEventListener("DOMContentLoaded", function() {
         }
 
         function visualizePrima() {
+            if (queue.length === 0 ){
+                cells[point.row * N + point.col].classList.add('end');
+                return;
+            }
             if (queue.length > 0) {
                 let index = Math.floor(Math.random() * queue.length);
                 point = new Coordinate(queue[index].row, queue[index].col);

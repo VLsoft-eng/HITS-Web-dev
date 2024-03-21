@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
         return {mazeMatrix, start, end};
     }
 
-    function visualizePath(path, cells, N) {
+    function showPath(path, cells, N) {
         path.reverse();
         let i = 0;
         function visualize() {
@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const cells = document.querySelectorAll('.cell');
         const {mazeMatrix, start, end} = matrixInit([], cells);
 
-        if (start == null || end == null){
+        if (start == null || end == null) {
             alert("Постабде пж стартп и финимш");
             return;
         }
@@ -74,65 +74,90 @@ document.addEventListener("DOMContentLoaded", function() {
             cell.classList.remove('path');
         });
 
-        let queue = [];
         let visited = [];
+        for (let i = 0;i<N;i++){
+            visited[i]=[];
+            for (let j =0;j<N;j++){
+                visited[i][j] = 0;
+            }
+        }
+        let queue = [];
         queue.push(start);
 
         function visualizeAlg() {
-            let current = queue[0];
-
-            if (visited.includes(current)){
+            if (queue.length === 0) {
                 alert("Пути Нед!1!!1!");
                 return 0;
-            }
+            } else if (queue.length > 0) {
 
-            // вывод пути
-            if (current.row === end.row && current.column === end.column) {
-                let path = [];
-                let currentNode = current;
-                while (currentNode.parent !== null) {
-                    path.push(currentNode);
-                    currentNode = currentNode.parent;
+                let bestIndex = 0;
+                for (let i = 0; i < queue.length; i++) {
+                    if (queue[i].f < queue[bestIndex].f) {
+                        bestIndex = i;
+                    }
                 }
-                visualizePath(path, cells, N);
-                return 0;
-            }
 
-            queue.splice(0, 1);
+                let current = queue[bestIndex];
 
-            cells[current.row * N + current.column].classList.remove('spotted');
-            cells[current.row * N + current.column].classList.add('visited');
+                // вывод пути
+                if (current.row === end.row && current.column === end.column) {
+                    let path = [];
+                    let currentNode = current;
+                    while (currentNode.parent !== null) {
+                        path.push(currentNode);
+                        currentNode = currentNode.parent;
+                    }
+                    showPath(path, cells, N);
+                    return 0;
+                }
 
-            const {row, column} = current;
+                queue.splice(bestIndex, 1);
+                visited[current.row][current.column] = 1;
+                cells[current.row * N + current.column].classList.remove('spotted');
+                cells[current.row * N + current.column].classList.add('visited');
 
-            const moves = [
-                {row: 0, column: -1},
-                {row: 0, column: 1},
-                {row: -1, column: 0},
-                {row: 1, column: 0}
-            ];
+                // создание массива соседей
+                let moves = [
+                    {row: 0, column: -1},
+                    {row: 0, column: 1},
+                    {row: -1, column: 0},
+                    {row: 1, column: 0}
+                ];
 
-            for (const move of moves) {
-                let neighbor = new Node(row + move.row, column + move.column, current);
+                let neighbors = [];
+                for (let i = 0; i < 4; i++) {
+                    let neighbor = new Node(current.row + moves[i].row, current.column + moves[i].column, current);
 
-                if (neighbor.row >= 0 && neighbor.row < N && neighbor.column >= 0 && neighbor.column < N) {
-                    if (mazeMatrix[neighbor.row][neighbor.column].type !== 1) {
+                    if (neighbor.row >= 0 && neighbor.row < N && neighbor.column >= 0 && neighbor.column < N) {
+                        if (mazeMatrix[neighbor.row][neighbor.column].type !== 1) {
+                            neighbors.push(neighbor);
+                        }
+                    }
+                }
 
-                        if (visited.includes(neighbor)) {
+                // основная часть алгоритма
+                for (let i = 0; i < neighbors.length; i++) {
+                    let neighbor = neighbors[i];
+
+                    if (visited[neighbor.row][neighbor.column] !== 1) {
+                        console.log(visited[neighbor.row][neighbor.column],neighbor.row,neighbor.column)
+                        let newG = current.g + 1;
+
+                        if (!queue.includes(neighbor)) {
+                            queue.push(neighbor);
+                        } else if (newG >= neighbor.g) {
                             continue;
                         }
-                        neighbor.g = current.g + 1;
+
+                        neighbor.g = newG;
                         neighbor.h = Math.abs(neighbor.row - end.row) + Math.abs(neighbor.column - end.column);
                         neighbor.f = neighbor.g + neighbor.h;
-
-                        queue.push(neighbor);
+                        neighbor.parent = current;
+                        visited[neighbor.row][neighbor.column] = 1;
                         cells[neighbor.row * N + neighbor.column].classList.add('spotted');
                     }
                 }
             }
-
-            visited.push(current);
-            queue.sort((a, b) => a.f - b.f);
             setTimeout(visualizeAlg, slider.value);
         }
         visualizeAlg();
