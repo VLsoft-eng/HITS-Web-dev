@@ -45,12 +45,12 @@ p{
 .cell {
     width: 25px;
     height: 25px;
-    border-radius: 3px;
-    border: 1px solid #111111;
+    border-radius: 10px;
 }
 
 .cell.path{
     background-color: #007aff;
+    box-shadow: 0 0 5px #67b2ff;
 }
 
 .cell.spotted{
@@ -69,10 +69,12 @@ p{
 
 .cell.start{
     background-color: green;
+    box-shadow: 0 0 5px #00a100;
 }
 
 .cell.end{
     background-color: red;
+    box-shadow: 0 0 5px #fc5f5f;
 }
 
 button{
