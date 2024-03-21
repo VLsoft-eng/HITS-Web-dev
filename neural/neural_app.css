@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@400;700&display=swap');
+
+body {
+    background-color: #111111;
+}
+
+button{
+    background-color: #111111;
+    border-radius: 10px;
+    margin-left: 15px;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+button:hover{
+    background-color: gray;
+    box-shadow: 0 0 5px #727272,
+    0 0 5px #b7b7b7,
+    0 0 10px #cecece,
+    0 0 15px #ffffff;
+}
+
+button img{
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+}
+
+#header{
+    height: 15vh;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: azure;
+}
+
+#answer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: azure;
+    font-size: 200px;
+}
+
+#block{
+    position: relative;
+    margin: 0 auto;
+    height: 500px;
+    width: 500px;
+    display: flex;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .2);
+    box-shadow: 0 0 5px #8c8c8c;
+    border: 1px solid #3d3d3d;
+}
+
+#art {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    height: 500px;
+    width: 500px;
+    grid-template-rows: repeat(5, 100px);
+    grid-template-columns: repeat(5, 100px);
+}
+
+#answerBlock {
+    position:absolute;
+    justify-content: center;
+    justify-items: center;
+    text-align: center;
+    width: 250px;
+    height: 250px;
+    margin-top: 125px;
+    margin-left: 15px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .2);
+    box-shadow: 0 0 5px #8c8c8c;
+    border: 1px solid #3d3d3d;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    border: 1px solid #111111;
+}
+
+.cell.filled{
+    background-color: #007aff;
+    box-shadow: 0 0 5px #67b2ff;
+}
