@@ -1,60 +1,90 @@
-import {searching} from "./genetic.js";
+import { geneticAlgorithm } from "./genetic.js";
 
 export let points = [];
-let answerPath = [];
-
+export let shortestRoute = [];
+let population = [];
+let timeout;
+let interval = null;
 let showLines = true;
-let answerFound= false;
+let answerIsFound= false;
+let searchingRoute = false;
 
 const canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d');
 canvas.addEventListener('click', function (event){
-    let rect = canvas.getBoundingClientRect();
-    let x = event.clientX - rect.left;
-    let y = event.clientY - rect.top;
-    points.push({x, y});
-    if (answerFound){
-        answerPath = [];
-        answerFound = false;
+    resetInterval();
+
+    if(points.length > 50){
+        alert('Я не буду запускаться с таким большим количеством точек');
+        return;
     }
-    drawPoints();
+
+    let edge  = canvas.getBoundingClientRect();
+    let x = event.clientX - edge.left;
+    let y = event.clientY - edge.top;
+    points.push({x, y});
+
+    shortestRoute.length = 0;
+    population.length = 0;
+    answerIsFound = false;
+    searchingRoute = false;
+    redrawGraph();
 });
 
 const findButton = document.getElementById('start');
 findButton.addEventListener('click', function (){
-    if (points.length < 2){
+    resetInterval();
+    if (points.length < 3){
         alert('Поставьте больше точек...')
         return;
     }
-    answerFound = true;
-    answerPath = searching();
-    drawPoints();
+    population.length = 0;
+    findRoute();
 });
 
+function findRoute(){
+    searchingRoute = true;
+    answerIsFound = false;
+    let countIterations = 0;
+    interval = setInterval(function (){
+        population = geneticAlgorithm(population)
+        if (population[0] !== shortestRoute){
+            shortestRoute = population[0];
+            redrawGraph();
+            countIterations = 0;
+        }
+        if (countIterations > 100){
+            searchingRoute = false;
+            answerIsFound = true;
+            redrawGraph();
+            resetInterval();
+        }
+        countIterations++;
+    }, timeout);
+}
 
 const clearButton = document.getElementById('clear');
 clearButton.addEventListener('click', function (){
+    resetInterval();
     ctx.reset();
     points.length = 0;
-    answerPath.length = 0;
-    answerFound = false;
+    shortestRoute.length = 0;
+    population.length = 0;
+    answerIsFound = false;
+    searchingRoute = false;
 });
 
 const showLinesButton = document.getElementById('lineBetweenPoints');
 showLinesButton.addEventListener('click', function (){
     showLines = !showLines;
-    ctx.reset();
-    drawPoints();
+    redrawGraph();
+    if (searchingRoute) {
+        resetInterval();
+        findRoute();
+    }
 });
 
 function drawPoints(){
-    ctx.reset();
-    if (showLines){
-        drawLines();
-    }
-    if (answerFound){
-        drawAnswerPath();
-    }
     ctx.font = "15px Arial";
     ctx.textAlign = "center";
     let len = points.length;
@@ -85,20 +115,25 @@ function drawLines(){
     ctx.closePath();
 }
 
-function drawAnswerPath() {
+function drawShortRoute() {
     ctx.beginPath();
     ctx.lineWidth = 4;
     ctx.line;
-    ctx.strokeStyle = 'rgba(0,255,255,1)';
-    ctx.shadowColor = 'rgba(0,255,255,1)'; // Цвет тени
-    ctx.shadowBlur = 5; // Размытие тени
-    let len = answerPath.length;
-    for (let i = 0; i < len - 1; i++){
-        ctx.moveTo(points[answerPath[i]].x, points[answerPath[i]].y);
-        ctx.lineTo(points[answerPath[i + 1]].x, points[answerPath[i + 1]].y);
+    if (answerIsFound) {
+        ctx.strokeStyle = 'rgba(0,255,255,1)';
+        ctx.shadowColor = 'rgba(0,255,255,1)';
+    } else {
+        ctx.strokeStyle = 'rgba(255,255,255,1)';
+        ctx.shadowColor = 'rgba(255,255,255,1)';
     }
-    ctx.moveTo(points[answerPath[0]].x, points[answerPath[0]].y);
-    ctx.lineTo(points[answerPath[len - 1]].x, points[answerPath[len - 1]].y);
+    ctx.shadowBlur = 5;
+    let len = points.length;
+    for (let i = 0; i < len - 1; i++){
+        ctx.moveTo(points[shortestRoute[i]].x, points[shortestRoute[i]].y);
+        ctx.lineTo(points[shortestRoute[i + 1]].x, points[shortestRoute[i + 1]].y);
+    }
+    ctx.moveTo(points[shortestRoute[0]].x, points[shortestRoute[0]].y);
+    ctx.lineTo(points[shortestRoute[len - 1]].x, points[shortestRoute[len - 1]].y);
     ctx.stroke();
     ctx.closePath();
     ctx.shadowColor = 'transparent';
@@ -107,4 +142,28 @@ function drawAnswerPath() {
     ctx.shadowOffsetY = 0;
 }
 
+const sliderSpeed = document.getElementById('slider-speed');
+sliderSpeed.addEventListener('input', function (){
+    timeout = 101 - sliderSpeed.value ;
+    if(searchingRoute){
+        resetInterval();
+        findRoute();
+    }
+});
+
+function resetInterval() {
+    clearInterval(interval);
+    interval = null;
+}
+
+function redrawGraph(){
+    ctx.reset();
+    if (showLines){
+        drawLines();
+    }
+    if (answerIsFound || searchingRoute){
+        drawShortRoute();
+    }
+    drawPoints();
+}
 
