@@ -1,4 +1,4 @@
-import {kMeansClustering} from "./KMeans.js";
+import {kMeansClustering} from "./KMeans/KMeans.js";
 import {clearAndReset, draw, startDrawing, stopDrawing} from "./draw_utils.js";
 export let circles = [];
 export let clusters = []

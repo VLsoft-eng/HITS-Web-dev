@@ -1,7 +1,7 @@
-import {Group} from "./group_class.js";
-import {getRandomColor} from "./color_util.js";
-import {groupCount, canvas} from "./script.js";
-import {clusters} from "./script.js";
+import {Group} from "./KMeans_group_class.js";
+import {getRandomColor} from "../color_util.js";
+import {groupCount, canvas} from "../script.js";
+import {clusters} from "../script.js";
 
 export function groupsInit () {
 

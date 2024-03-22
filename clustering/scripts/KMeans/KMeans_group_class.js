@@ -1,4 +1,4 @@
-import {canvas} from "./script.js";
+import {canvas} from "../script.js";
 
 export class Group {
     id;

@@ -35,7 +35,7 @@ function isOverlap(newDot) {
     return false;
 }
 
-export function drawClusters() {
+export function drawKMeansClusters() {
     clear();
     clusters.forEach((c) => {
         c.dots.forEach((d) => {
@@ -49,6 +49,19 @@ export function drawClusters() {
         ctx.fillStyle = c.color;
         ctx.rect(c.center.x, c.center.y, squareSize, squareSize);
         ctx.stroke();
+    })
+}
+
+export function drawHierarchicalClusters() {
+    clear();
+    clusters.forEach((c) => {
+        c.dots.forEach((d) => {
+            console.log(d.x);
+            ctx.fillStyle = c.color;
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
+            ctx.fill();
+        })
     })
 }
 

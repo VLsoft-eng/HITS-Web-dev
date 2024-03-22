@@ -1,6 +1,6 @@
-import {drawClusters} from "./draw_utils.js";
-import {groupsInit} from "./clustering_preprocess.js";
-import {canvas, circles, clusters, dots, groupCount} from "./script.js";
+import {drawKMeansClusters} from "../draw_utils.js";
+import {groupsInit} from "./KMeans_preprocess.js";
+import {canvas, circles, clusters, dots, groupCount} from "../script.js";
 
 export function moveCenter() {
     let finished = false;
@@ -61,7 +61,13 @@ export function kMeansClustering() {
         alert("Нанесите частицы!");
         return;
     }
+
     groupsInit(groupCount);
+
+    if (dots.length < clusters.length) {
+        alert("Частиц меньше, чем центров!");
+        return;
+    }
     let previousClusters = clusters.map(cluster => ({ ...cluster }));
 
     for (;;) {
@@ -70,5 +76,5 @@ export function kMeansClustering() {
         if (!isCentersChange(previousClusters)) break;
         previousClusters = clusters.map(cluster => ({ ...cluster }));
     }
-    drawClusters();
+    drawKMeansClusters();
 }
