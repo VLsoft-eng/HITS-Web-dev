@@ -12,8 +12,7 @@ canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 export let ctx = canvas.getContext('2d');
 const btn = document.getElementById('draw_button');
-export let groupCount = 3; // количество кластеров
-export const maxIterations = 300;
+export let groupCount = 3;
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);

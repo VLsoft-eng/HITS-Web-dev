@@ -15,7 +15,7 @@ export function dotsInit() {
 
 export function groupsInit () {
     for (let i = 0; i < groupCount; i++) {
-        let g = new Group(i, getRandomColor(), Math.random() * canvas.width, Math.random() * canvas.height);
+        let g = new Group(i, getRandomColor());
         clusters.push(g);
     }
     dots.forEach((d) => {

@@ -1,10 +1,10 @@
 import {drawClusters} from "./draw_utils.js";
 import {dotsInit, groupsInit} from "./clustering_preprocess.js";
-import {canvas, circles, clusters, dots, groupCount, maxIterations} from "./script.js";
+import {canvas, circles, clusters, dots, groupCount} from "./script.js";
 
 export function moveCenter() {
     let finished = false;
-    clusters.forEach((group, i) => {
+    clusters.forEach((group) => {
         finished = true;
 
         if (group.dots.length === 0) {
@@ -62,13 +62,12 @@ export function updateGroups() {
     }
 }
 
-function isCentersChange() {
+function isCentersChange(previousClusters) {
     for (let i = 0; i < clusters.length; i++) {
-        let previousClusters;
         let firstCenter = previousClusters[i].center;
         let secondCenter = clusters[i].center;
 
-        if (Math.sqrt(Math.pow(firstCenter.x - secondCenter.x, 2) + Math.pow(firstCenter.y - secondCenter.y, 2)) > 1) {
+        if (Math.sqrt(Math.pow(firstCenter.x - secondCenter.x, 2) + Math.pow(firstCenter.y - secondCenter.y, 2)) > 0.002) {
             return true;
         }
     }
@@ -79,10 +78,13 @@ export function kMeansClustering() {
     dotsInit(circles, dots);
     groupsInit(groupCount);
 
+    let previousClusters = clusters.map(cluster => ({ ...cluster }));
 
-    for (let i = 0; i < maxIterations; i++) {
-        moveCenter();
+    for (;;) {
         updateGroups();
+        moveCenter();
+        if (!isCentersChange(previousClusters)) break;
+        previousClusters = clusters.map(cluster => ({ ...cluster }));
     }
     drawClusters();
 }
