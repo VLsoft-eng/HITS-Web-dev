@@ -1,5 +1,5 @@
 import {drawClusters} from "./draw_utils.js";
-import {dotsInit, groupsInit} from "./clustering_preprocess.js";
+import {groupsInit} from "./clustering_preprocess.js";
 import {canvas, circles, clusters, dots, groupCount} from "./script.js";
 
 export function moveCenter() {
@@ -28,38 +28,20 @@ export function moveCenter() {
 
 
 export function updateGroups() {
-    for (let i = 0; i < clusters.length; i++) {
-        let c = clusters[i];
-        for (let j = 0; j < c.dots.length; j++) {
-
-            let dot = c.dots[j];
-            c.dots.splice(j, 1);
-            j--;
-
-            let min = Infinity;
-            let group = clusters[0];
-            let moved = false;
-
-            for (let k = 0; k < clusters.length; k++) {
-                let d = Math.pow(clusters[k].center.x - dot.x, 2) + Math.pow(clusters[k].center.y - dot.y, 2);
-                if (min === undefined || d < min) {
-                    min = d;
-                    group = clusters[k];
-                }
+    clusters.forEach((g) => {g.dots = [];})
+    dots.forEach((dot) => {
+        let min = Infinity;
+        let group;
+        clusters.forEach((g) => {
+            let d = Math.pow(g.center.x - dot.x, 2) + Math.pow(g.center.y - dot.y, 2);
+            if (d < min) {
+                min = d;
+                group = g;
             }
-
-            group.dots.push(dot);
-            dot.group = group;
-            moved = true;
-
-            if (group.id !== c.id) {
-                moved = true;
-            }
-            if (moved) {
-                j++;
-            }
-        }
-    }
+        });
+        group.dots.push(dot);
+        dot.group = group;
+    })
 }
 
 function isCentersChange(previousClusters) {
@@ -67,7 +49,7 @@ function isCentersChange(previousClusters) {
         let firstCenter = previousClusters[i].center;
         let secondCenter = clusters[i].center;
 
-        if (Math.sqrt(Math.pow(firstCenter.x - secondCenter.x, 2) + Math.pow(firstCenter.y - secondCenter.y, 2)) > 0.002) {
+        if (Math.sqrt(Math.pow(firstCenter.x - secondCenter.x, 2) + Math.pow(firstCenter.y - secondCenter.y, 2)) > 0) {
             return true;
         }
     }
@@ -75,9 +57,11 @@ function isCentersChange(previousClusters) {
 }
 
 export function kMeansClustering() {
-    dotsInit(circles, dots);
+    if (dots.length === 0) {
+        alert("Нанесите частицы!");
+        return;
+    }
     groupsInit(groupCount);
-
     let previousClusters = clusters.map(cluster => ({ ...cluster }));
 
     for (;;) {

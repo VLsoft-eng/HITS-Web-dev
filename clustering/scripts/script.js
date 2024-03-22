@@ -1,5 +1,5 @@
 import {kMeansClustering} from "./KMeans.js";
-import {draw, startDrawing, stopDrawing} from "./draw_utils.js";
+import {clearAndReset, draw, startDrawing, stopDrawing} from "./draw_utils.js";
 export let circles = [];
 export let clusters = []
 export let dots = [];
@@ -8,15 +8,17 @@ export let squareSize = 10;
 
 
 export let canvas = document.getElementById('cluster_canvas');
+const btn = document.getElementById('draw_button');
+const cbtn = document.getElementById('clear_button');
 canvas.width = canvas.clientWidth;
 canvas.height = canvas.clientHeight;
 export let ctx = canvas.getContext('2d');
-const btn = document.getElementById('draw_button');
-export let groupCount = 3;
+export let groupCount = 5;
 canvas.addEventListener('mousemove', draw);
 canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('mousedown', startDrawing);
+cbtn.addEventListener('click', clearAndReset)
 btn.addEventListener('click', kMeansClustering);
 
 

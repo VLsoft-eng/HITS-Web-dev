@@ -1,4 +1,5 @@
-import {ctx, canvas, clusters, squareSize, circles, minDistance} from "./script.js";
+import {ctx, canvas, clusters, squareSize, circles, minDistance, dots} from "./script.js";
+import {Dot} from "./dot_class.js";
 
 let isDrawing = false;
 export function stopDrawing() {
@@ -10,15 +11,21 @@ export function startDrawing() {
     draw();
 }
 
-export function clearCanvas() {
+export function clear() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function isOverlap(newCircle) {
-    if (circles.length === 0) return false;
-    for (let circle of circles) {
-        const distanceX = newCircle.x - circle.x;
-        const distanceY = newCircle.y - circle.y;
+export function clearAndReset() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    circles.length = 0;
+    clusters.length = 0;
+    dots.length = 0;
+}
+function isOverlap(newDot) {
+    if (dots.length === 0) return false;
+    for (let dot of dots) {
+        const distanceX = newDot.x - dot.x;
+        const distanceY = newDot.y - dot.y;
         const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
 
         if (distance < minDistance) {
@@ -29,7 +36,7 @@ function isOverlap(newCircle) {
 }
 
 export function drawClusters() {
-    clearCanvas();
+    clear();
     clusters.forEach((c) => {
         c.dots.forEach((d) => {
             console.log(d.x);
@@ -58,6 +65,6 @@ export function draw() {
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI * 2);
         ctx.fill();
-        circles.push({x, y})
+        dots.push(new Dot(x, y))
     }
 }
