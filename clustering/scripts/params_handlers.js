@@ -21,9 +21,3 @@ export function changeModeHandler() {
     }
 }
 
-export function changeClustersHandler() {
-    fetchClustersCount.textContent = clustersSlider.value;
-    groupCount = clustersSlider.value;
-}
-
-

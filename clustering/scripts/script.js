@@ -1,6 +1,6 @@
 import {kMeansClustering} from "./KMeans/KMeans.js";
 import {clearAndReset, draw, startDrawing, stopDrawing} from "./draw_utils.js";
-import {changeClustersHandler, changeModeHandler} from "./params_handlers.js";
+import {changeModeHandler} from "./params_handlers.js";
 export let clusters = []
 export let dots = [];
 export let minDistance = 20;
@@ -28,7 +28,10 @@ canvas.addEventListener('mousedown', startDrawing);
 cbtn.addEventListener('click', clearAndReset)
 btn.addEventListener('click', kMeansClustering);
 algorithmSelector.addEventListener('change', changeModeHandler);
-clustersSlider.addEventListener('input', changeClustersHandler);
+clustersSlider.addEventListener('input', function () {
+    fetchClustersCount.textContent = clustersSlider.value;
+    groupCount = clustersSlider.value;
+});
 
 
 
