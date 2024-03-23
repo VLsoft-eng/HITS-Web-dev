@@ -3,9 +3,10 @@ import {dotGroupsInit} from "./hierarchical_preprocess.js";
 import {drawHierarchicalClusters} from "../draw_utils.js";
 import {Group} from "./hierarchical_group_class.js";
 import {getRandomColor} from "../color_util.js";
+import {getDistance} from "../metrics.js";
 
 function getDotsDistance(firstDot, secondDot) {
-    return Math.sqrt(Math.pow(firstDot.x - secondDot.x, 2) + Math.pow(firstDot.y - secondDot.y, 2));
+    return getDistance(firstDot, secondDot);
 }
 function clustersMerge(indexClustersPair) {
     let newCluster = new Group(getRandomColor());

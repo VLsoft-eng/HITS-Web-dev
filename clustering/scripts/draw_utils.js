@@ -1,4 +1,4 @@
-import {ctx, canvas, clusters, squareSize, circles, minDistance, dots} from "./script.js";
+import {ctx, canvas, clusters, squareSize, minDistance, dots} from "./script.js";
 import {Dot} from "./dot_class.js";
 
 let isDrawing = false;
@@ -17,7 +17,6 @@ export function clear() {
 
 export function clearAndReset() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    circles.length = 0;
     clusters.length = 0;
     dots.length = 0;
 }
@@ -61,6 +60,16 @@ export function drawHierarchicalClusters() {
             ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
             ctx.fill();
         })
+    })
+}
+
+export function drawDefault() {
+    clear();
+    dots.forEach((dot) => {
+        ctx.beginPath();
+        ctx.fillStyle = 'black';
+        ctx.arc(dot.x, dot.y, 10, 0, Math.PI * 2);
+        ctx.fill();
     })
 }
 

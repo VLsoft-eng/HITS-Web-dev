@@ -1,6 +1,7 @@
 import {drawKMeansClusters} from "../draw_utils.js";
 import {groupsInit} from "./KMeans_preprocess.js";
-import {canvas, circles, clusters, dots, groupCount} from "../script.js";
+import {canvas, clusters, dots, groupCount} from "../script.js";
+import {getDistance} from "../metrics.js";
 
 export function moveCenter() {
     let finished = false;
@@ -33,7 +34,7 @@ export function updateGroups() {
         let min = Infinity;
         let group;
         clusters.forEach((g) => {
-            let d = Math.pow(g.center.x - dot.x, 2) + Math.pow(g.center.y - dot.y, 2);
+            let d = getDistance(g.center, dot);
             if (d < min) {
                 min = d;
                 group = g;
