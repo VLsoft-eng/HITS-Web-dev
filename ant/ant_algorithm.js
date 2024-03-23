@@ -1,11 +1,17 @@
-import {antCount, iterateCount, points,drawPath} from './field.js'
+import {antCount, slider, iterateCount, points,draw} from './field.js'
+export {bestPath};
 
 const alpha = 1;
-const beta = 1;
-const p = 0.5;
-const q = 100;
+const beta = 4;
+const p = 0.4;
+const q = 240;
 const startPheromone = 0.2;
 
+function reset(){
+    matrixInit();
+    bestPathLength = Number.MAX_VALUE;
+    bestPath = [];
+}
 function matrixInit(){
     for (let i=0; i < points.length; i++){
         pheromoneMatrix[i] = [];
@@ -14,25 +20,30 @@ function matrixInit(){
         }
     }
 }
+
 function calculateDistance(index1,index2){
-    console.log(`Координаты точек: (${points[index1].x},${points[index1].y}) и (${points[index2].x},${points[index2].y})`);
-    let side1 = Math.abs(points[index1].x - points[index2].x);
-    let side2 = Math.abs(points[index1].y - points[index2].y);
-    console.log(`Длины катетов: ${side1} и ${side2}`);
-    return Math.sqrt(Math.pow(side1,2) + Math.pow(side2,2));
+    return Math.sqrt(Math.pow(Math.abs(points[index1].x - points[index2].x),2) + Math.pow(Math.abs(points[index1].y - points[index2].y),2));
 }
+
+function calculatePathLength(path){
+    let len = 0
+
+    for (let j = 1; j < path.length; j++){
+        len+=calculateDistance(path[j],path[j-1]);
+    }
+
+    return len;
+}
+
 function probability(currentIndex,unvisited){
     let chances =[];
     let sum= 0;
     for (let i = 0; i < unvisited.length; i++){
-        if (currentIndex === unvisited[i]){continue;}
-        let currentChance = Math.pow(pheromoneMatrix[currentIndex][unvisited[i]],alpha) * Math.pow(1 / calculateDistance(currentIndex,i),beta);
-        console.log("Current distance:", calculateDistance(currentIndex,i));
-        console.log("Current chance:", currentChance);
+        let currentChance = Math.pow(pheromoneMatrix[currentIndex][unvisited[i]],alpha) * Math.pow(1 / calculateDistance(currentIndex,unvisited[i]),beta);
         chances.push(currentChance);
         sum+=currentChance;
     }
-    for (let i = 0; i <unvisited.length; i++){
+    for (let i = 0; i < unvisited.length; i++){
         chances[i] /= sum;
     }
     return chances;
@@ -44,15 +55,13 @@ function nextPoint(chances){
 
     for (let i = 0; i < chances.length; i++){
         sum+=chances[i];
-        if(sum>=random){
+        if (sum>=random){
             return i;
         }
     }
-    return chances[chances.length-1];
 }
 
 function update(paths) {
-    let flag = false;
     for (let i = 0; i < points.length; i++) {
         for (let j = 0; j < points.length; j++) {
             pheromoneMatrix[i][j] *= (1 - p);
@@ -61,22 +70,18 @@ function update(paths) {
 
     for (let i = 0; i < antsCount; i++) {
         let path = paths[i];
-        let len = 0;
-        for (let j = 0; j < path.length; j++) {
-            len += path[j];
-        }
+
+        let len = calculatePathLength(path);
         let delta = q / len;
         if (len < bestPathLength) {
             bestPath = path;
             bestPathLength = len;
-            flag = true;
         }
         for (let j = 1; j < path.length; j++) {
             pheromoneMatrix[path[j - 1]][path[j]] += delta;
             pheromoneMatrix[path[j]][path[j - 1]] += delta;
         }
     }
-    if (flag ===true){drawPath(bestPath);}
 }
 
 function antMove(startIndex){
@@ -86,20 +91,17 @@ function antMove(startIndex){
     }
     unvisited.splice(startIndex,1);
 
-    let currentIndex = startIndex;
-    let path=[]; path.push(currentIndex);
-    while (unvisited.length>0){
-        console.log("unvisited length:", unvisited.length);
-        console.log("currentIndex:", currentIndex);
-        console.log("unvisited:", unvisited);
-        let chances = probability(currentIndex, unvisited);
-        console.log("chances:", chances);
-        currentIndex = nextPoint(chances);
-        console.log("next currentIndex:", currentIndex);
-        path.push(currentIndex);
-        unvisited.splice(currentIndex, 1);
+    let path=[]; path.push(startIndex);
+
+    while (unvisited.length > 0){
+
+        let chances = probability(path[path.length-1], unvisited);
+        let nextIndex = nextPoint(chances);
+
+        path.push(unvisited[nextIndex]);
+        unvisited.splice(nextIndex, 1);
     }
-    path.push(unvisited[0]);
+    path.push(startIndex);
     return path;
 }
 
@@ -112,14 +114,26 @@ function iterate(){
 }
 
 function antAlgorithm(){
+    reset();
     matrixInit();
-    for (let i= 0; i < iterateCount.value; i++){
-        iterate();
+
+    let i = 0;
+    function visualize() {
+        if (i < iterateCount.value){
+            iterate();
+            let outputDistance = document.getElementById("shortest-distance-value");
+            outputDistance.innerHTML = bestPathLength;
+            draw(bestPath);
+        }
+        setTimeout(visualize, 100 - slider.value);
     }
+    visualize();
 }
 
 let antsCount = antCount.value;
 let bestPath =[];
 let pheromoneMatrix = [];
 let bestPathLength = Number.MAX_VALUE;
+
 document.getElementById('start').addEventListener('click',antAlgorithm);
+document.getElementById('delete').addEventListener('click',reset);

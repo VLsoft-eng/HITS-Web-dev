@@ -1,16 +1,25 @@
 const canvas = document.getElementById('field');
 
 canvas.addEventListener('click', (e) => {
+    if (points.length >= 50){
+        alert ("Воу воу, коммивояжер, притормози, сначала эти 50 городов обойди!")
+        return;
+    }
     const x = e.offsetX;
     const y = e.offsetY;
     points.push({ x, y });
-    draw();
+    draw([]);
 });
 
-function draw(){
+function draw(path){
+    if (path.length!==0){
+        bestPath = path;
+    }
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (show) {
         ctx.beginPath();
+        ctx.strokeStyle = 'gray';
+        ctx.fillStyle = 'lightgray';
         for (let i = 0; i < points.length; i++) {
             for (let j = 0; j < points.length; j++) {
                 ctx.moveTo(points[i].x, points[i].y);
@@ -18,6 +27,17 @@ function draw(){
             }
         }
         ctx.stroke();
+        ctx.closePath();
+    }
+
+    for (let i = 1; i < bestPath.length; i++) {
+        ctx.beginPath();
+        ctx.strokeStyle = 'navajowhite';
+        ctx.lineWidth = 4;
+        ctx.moveTo(points[bestPath[i]].x, points[bestPath[i]].y);
+        ctx.lineTo(points[bestPath[i-1]].x, points[bestPath[i-1]].y);
+        ctx.stroke();
+        ctx.lineWidth = 1;
         ctx.closePath();
     }
 
@@ -35,30 +55,16 @@ function draw(){
     }
 }
 
-function drawPath(path) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    draw();
-    ctx.beginPath();
-    ctx.moveTo(path[0].x, path[0].y);
-    for (let i = 1; i < path.length; i++) {
-        ctx.lineTo(path[i].x, path[i].y);
-    }
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-    ctx.closePath()
-
-}
-
 function showLines(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     show = !show;
-    draw()
+    draw([])
 }
 
 function clearField() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    points = [];
+    points.splice(0);
+    bestPath.splice(0);
 }
 
 //слайдеры
@@ -84,14 +90,12 @@ iterateCount.oninput = function() {
 }
 
 let ctx = canvas.getContext('2d');
+
 let points = [];
 let show = true;
+let bestPath = [];
 
-// стили
-ctx.strokeStyle = 'gray';
-ctx.fillStyle = 'lightgray';
-
-export {points,antCount,slider,iterateCount,drawPath};
+export {points,antCount,slider,iterateCount,draw};
 
 document.getElementById('show').addEventListener('click', showLines)
 document.getElementById('delete').addEventListener('click', clearField);
