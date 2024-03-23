@@ -1,5 +1,5 @@
 import { points } from "./canvas.js";
-import { populationSize, amountGeneration, mutation } from "./settings.js"
+import { populationSize, amountGeneration, mutation, showShortestDistance } from "./settings.js"
 let amountPoints;
 let population = [];
 
@@ -33,6 +33,7 @@ function sortRoutes() {
             }
         }
     }
+    showShortestDistance(Math.round(distances[0] * 100) / 100);
     for (let i = 0; i < amountGeneration; i++){
         population.pop();
     }

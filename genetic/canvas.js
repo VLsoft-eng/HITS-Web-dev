@@ -1,5 +1,5 @@
 import { geneticAlgorithm } from "./genetic.js";
-import { timeout } from "./settings.js";
+import { timeout,showShortestDistance } from "./settings.js";
 
 export let points = [];
 export let searchingRoute = false;
@@ -9,33 +9,71 @@ let population = [];
 let interval = null;
 let showLines = true;
 let answerIsFound= false;
+let pointRemovalMode = false;
 
 const canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d');
 canvas.addEventListener('click', function (event){
-    if(points.length > 50){
-        alert('Я не буду запускаться с таким большим количеством точек');
-        return;
-    }
-    resetInterval();
-
     let edge  = canvas.getBoundingClientRect();
     let x = event.clientX - edge.left;
     let y = event.clientY - edge.top;
     let point = {x: x, y: y}
 
+    if (pointRemovalMode){
+        deletePoint(point);
+        return;
+    }
+
+    if(points.length > 50){
+        alert('Я не буду запускаться с таким большим количеством точек');
+        return;
+    }
+
     if (!checkOverlay(point)){
         alert('Не ставьте точки друг на друга!!!');
         return;
     }
-    points.push(point);
-
+    showShortestDistance(null);
+    resetInterval();
     shortestRoute.length = 0;
     population.length = 0;
     answerIsFound = false;
     searchingRoute = false;
+    points.push(point);
     redrawGraph();
 });
+
+function deletePoint(point){
+    if (findNearestPoint(point)){
+        showShortestDistance(null);
+        resetInterval();
+        shortestRoute.length = 0;
+        population.length = 0;
+        answerIsFound = false;
+        searchingRoute = false;
+        redrawGraph();
+    }
+}
+
+const deletePointButton = document.getElementById('delete-point');
+deletePointButton.addEventListener('click',function (){
+    pointRemovalMode = !pointRemovalMode;
+    if (pointRemovalMode){
+        document.getElementById('delete-img').src ="../source/genetic_icons/delete-point-active.png"
+    } else {
+        document.getElementById('delete-img').src="../source/genetic_icons/delete-point-inactive.png"
+    }
+});
+
+function findNearestPoint(point){
+    for (let i = 0; i < points.length; i++){
+        if (calculateDistance(point,points[i]) < 11.5){
+            points.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+}
 
 function calculateDistance(pointFirst, pointSecond){
     return Math.sqrt((pointFirst.x - pointSecond.x)**2 + (pointFirst.y - pointSecond.y)**2);
@@ -75,15 +113,16 @@ export function findRoute(){
         if (countIterations > 100){
             searchingRoute = false;
             answerIsFound = true;
-            redrawGraph();
             resetInterval();
+            redrawGraph();
         }
         countIterations++;
     }, timeout);
 }
 
-const clearButton = document.getElementById('clear');
-clearButton.addEventListener('click', function (){
+const clearCanvasButton = document.getElementById('clear-canvas');
+clearCanvasButton.addEventListener('click', function (){
+    showShortestDistance(null);
     resetInterval();
     ctx.reset();
     points.length = 0;
@@ -93,7 +132,7 @@ clearButton.addEventListener('click', function (){
     searchingRoute = false;
 });
 
-const showLinesButton = document.getElementById('lineBetweenPoints');
+const showLinesButton = document.getElementById('show-lines');
 showLinesButton.addEventListener('click', function (){
     showLines = !showLines;
     redrawGraph();
@@ -113,7 +152,7 @@ function drawPoints(){
         ctx.arc(points[i].x, points[i].y, 10, 0, Math.PI * 2);
         ctx.fill();
         ctx.fillStyle = 'white';
-        ctx.fillText(i, points[i].x, points[i].y + 5);
+        ctx.fillText(i + 1, points[i].x, points[i].y + 5);
         ctx.closePath();
     }
 }

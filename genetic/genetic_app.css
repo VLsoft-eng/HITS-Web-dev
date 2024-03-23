@@ -33,13 +33,58 @@ p{
     background-color: rgba(255, 255, 255, .2);
 }
 
+.interface{
+    margin-left: 5px;
+}
+
+.shortest-distance{
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .2);
+    border: 2px solid white;
+    box-shadow: 0 0 10px white;
+}
+
+#shortest-distance-title{
+    text-align: center;
+    margin-top: 2px;
+}
+
+#shortest-distance-value{
+    text-align: center;
+    margin-top: 2px;
+}
+
+.control {
+    margin-top: 5px;
+    width: 200px;
+    height: 445px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .2);
+    border: 2px solid white;
+    box-shadow: 0 0 10px white;
+}
+
+.buttons-container{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 22px;
+}
+
+.button-row {
+    display: flex;
+}
+
 button{
     display: flex;
     flex-direction: column;
     background-color: #111111;
     border-radius: 10px;
-    margin-left: 10px;
-    margin-top: 10px;
+    margin: 10px;
     cursor: pointer;
 }
 
@@ -53,31 +98,23 @@ button:hover{
 button img{
     width: 50px;
     height: 50px;
-    margin: 0 auto;
+    margin-left: 1.5px;
 }
 
-.interface{
-    width: 750px;
-    height: 500px;
-    border-radius: 10px;
-    margin-left: 5px;
-    background-color: rgba(255, 255, 255, .2);
-    border: 2px solid white;
-    box-shadow: 0 0 10px white;
-}
-
-.slider-container {
+.sliders-container {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 200px;
-    margin-top: 10px;
-    margin-left: 10px;
+}
+
+.sliders-container > div {
+    text-align: center;
+    margin-top: 20px;
 }
 
 .slider {
     -webkit-appearance: none;
-    -webkit-slider-container:none;
-    margin-top: 15px;
+    -webkit-slider-container: none;
     border-radius: 12px;
 }
 

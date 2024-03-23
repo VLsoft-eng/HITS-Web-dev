@@ -53,5 +53,10 @@ sliderMutation.addEventListener('input', function (){
     }
 });
 
+const shortestDistance = document.getElementById('shortest-distance-value');
+export function showShortestDistance(value) {
+    shortestDistance.innerHTML = value;
+}
+
 
 
