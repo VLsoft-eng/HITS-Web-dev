@@ -1,8 +1,6 @@
 import { points } from "./canvas.js";
-
+import { populationSize, amountGeneration, mutation } from "./settings.js"
 let amountPoints;
-const populationSize = 2000;
-const generations = 2000;
 let population = [];
 
 // Функция подсчета расстояние между двумя точками
@@ -35,7 +33,7 @@ function sortRoutes() {
             }
         }
     }
-    for (let i = 0; i < generations; i++){
+    for (let i = 0; i < amountGeneration; i++){
         population.pop();
     }
 }
@@ -65,7 +63,7 @@ function crossover(firstParent, secondParent) {
             child.push(point);
         }
     }
-    if (Math.random() < 0.1) {
+    if (Math.random() < mutation) {
         child = mutate(child);
     }
     return child;
@@ -73,7 +71,7 @@ function crossover(firstParent, secondParent) {
 
 // Функция эволюции популяции
 function evolvePopulation() {
-    for (let i = 0; i < generations; i++) {
+    for (let i = 0; i < amountGeneration; i++) {
         let firstParent = population[Math.floor(Math.random() * population.length)];
         let secondParent = population[Math.floor(Math.random() * population.length)];
         let child = crossover(firstParent, secondParent);
@@ -102,13 +100,23 @@ function generateRandomRoute() {
 export function geneticAlgorithm(array) {
     amountPoints = points.length;
     population = array;
-    if (population.length === 0) {
-        for (let i = 0; i < populationSize; i++) {
-            population.push(generateRandomRoute());
-        }
-    }
+    checkPopulationSize();
     evolvePopulation();
     sortRoutes();
     return population;
+}
+
+function checkPopulationSize(){
+    let lenght = population.length;
+    if (lenght < populationSize) {
+        for (let i = lenght; i < populationSize; i++) {
+            population.push(generateRandomRoute());
+        }
+    }
+    if (lenght > populationSize){
+        for (let i = lenght; i > populationSize; i--){
+            population.pop();
+        }
+    }
 }
 

@@ -20,28 +20,26 @@ body {
 }
 
 p{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
     font-family: 'Raleway', sans-serif;
     color: azure;
 }
 
-#graphBlock{
-    position: relative;
-    margin: 0 auto;
+#graph-block{
     height: 500px;
     width: 750px;
     display: flex;
-    border-radius: 10px;
+    margin-left: 50vh;
+    border-radius: 10px;;
     background-color: rgba(255, 255, 255, .2);
 }
 
 button{
+    display: flex;
+    flex-direction: column;
     background-color: #111111;
     border-radius: 10px;
     margin-left: 10px;
-    margin-bottom: 5px;
+    margin-top: 10px;
     cursor: pointer;
 }
 
@@ -58,25 +56,51 @@ button img{
     margin: 0 auto;
 }
 
-img {
-    position: relative;
-    top: 1.5px;
+.interface{
+    width: 750px;
+    height: 500px;
+    border-radius: 10px;
+    margin-left: 5px;
+    background-color: rgba(255, 255, 255, .2);
+    border: 2px solid white;
+    box-shadow: 0 0 10px white;
 }
 
 .slider-container {
-    display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    width: 200px;
+    margin-top: 10px;
+    margin-left: 10px;
 }
 
 .slider {
-    width: 500px;
-    height: 5px;
-    border-radius: 3px;
-    background: navajowhite;
-    outline: none;
-    opacity: 0.7;
-    margin-bottom: 10px;
+    -webkit-appearance: none;
+    -webkit-slider-container:none;
+    margin-top: 15px;
+    border-radius: 12px;
 }
+
+.slider::-webkit-slider-container{
+    box-shadow: 0 0 2px white;
+    border-radius: 12px;
+}
+
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    border-radius: 12px;
+    background: #111111;
+    cursor: pointer;
+    opacity: 1;
+}
+
+.slider:hover{
+    opacity: 1;
+    box-shadow: 0 0 5px #727272,
+    0 0 5px #b7b7b7,
+    0 0 10px #cecece,
+    0 0 15px #ffffff;
+}
+

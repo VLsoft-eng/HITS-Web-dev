@@ -1,28 +1,34 @@
 import { geneticAlgorithm } from "./genetic.js";
+import { timeout } from "./settings.js";
 
 export let points = [];
-export let shortestRoute = [];
+export let searchingRoute = false;
+
+let shortestRoute = [];
 let population = [];
-let timeout;
 let interval = null;
 let showLines = true;
 let answerIsFound= false;
-let searchingRoute = false;
 
 const canvas = document.getElementById('canvas')
 let ctx = canvas.getContext('2d');
 canvas.addEventListener('click', function (event){
-    resetInterval();
-
     if(points.length > 50){
         alert('Я не буду запускаться с таким большим количеством точек');
         return;
     }
+    resetInterval();
 
     let edge  = canvas.getBoundingClientRect();
     let x = event.clientX - edge.left;
     let y = event.clientY - edge.top;
-    points.push({x, y});
+    let point = {x: x, y: y}
+
+    if (!checkOverlay(point)){
+        alert('Не ставьте точки друг на друга!!!');
+        return;
+    }
+    points.push(point);
 
     shortestRoute.length = 0;
     population.length = 0;
@@ -30,6 +36,19 @@ canvas.addEventListener('click', function (event){
     searchingRoute = false;
     redrawGraph();
 });
+
+function calculateDistance(pointFirst, pointSecond){
+    return Math.sqrt((pointFirst.x - pointSecond.x)**2 + (pointFirst.y - pointSecond.y)**2);
+}
+
+function checkOverlay(point){
+    for (let i = 0; i < points.length; i++){
+        if (calculateDistance(point, points[i]) < 18){
+            return false;
+        }
+    }
+    return true;
+}
 
 const findButton = document.getElementById('start');
 findButton.addEventListener('click', function (){
@@ -42,7 +61,7 @@ findButton.addEventListener('click', function (){
     findRoute();
 });
 
-function findRoute(){
+export function findRoute(){
     searchingRoute = true;
     answerIsFound = false;
     let countIterations = 0;
@@ -142,20 +161,6 @@ function drawShortRoute() {
     ctx.shadowOffsetY = 0;
 }
 
-const sliderSpeed = document.getElementById('slider-speed');
-sliderSpeed.addEventListener('input', function (){
-    timeout = 101 - sliderSpeed.value ;
-    if(searchingRoute){
-        resetInterval();
-        findRoute();
-    }
-});
-
-function resetInterval() {
-    clearInterval(interval);
-    interval = null;
-}
-
 function redrawGraph(){
     ctx.reset();
     if (showLines){
@@ -165,5 +170,10 @@ function redrawGraph(){
         drawShortRoute();
     }
     drawPoints();
+}
+
+export function resetInterval() {
+    clearInterval(interval);
+    interval = null;
 }
 
