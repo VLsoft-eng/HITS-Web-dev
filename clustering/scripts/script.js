@@ -1,5 +1,6 @@
 import {kMeansClustering} from "./KMeans/KMeans.js";
 import {clearAndReset, draw, startDrawing, stopDrawing} from "./draw_utils.js";
+import {hierarchicalClustering} from "./hierarchical/hierarchical.js";
 export let circles = [];
 export let clusters = []
 export let dots = [];
@@ -19,7 +20,7 @@ canvas.addEventListener('mouseup', stopDrawing);
 canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('mousedown', startDrawing);
 cbtn.addEventListener('click', clearAndReset)
-btn.addEventListener('click', kMeansClustering);
+btn.addEventListener('click', hierarchicalClustering);
 
 
 

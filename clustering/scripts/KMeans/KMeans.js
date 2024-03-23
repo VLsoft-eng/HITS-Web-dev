@@ -65,7 +65,7 @@ export function kMeansClustering() {
     groupsInit(groupCount);
 
     if (dots.length < clusters.length) {
-        alert("Частиц меньше, чем центров!");
+        alert("Частиц меньше, чем кластеров!");
         return;
     }
     let previousClusters = clusters.map(cluster => ({ ...cluster }));

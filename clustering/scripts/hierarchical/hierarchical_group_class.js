@@ -1,9 +1,9 @@
 
 
 export class Group {
-    dots;
+    dots = [];
     color;
-    constructor( color) {
+    constructor(color) {
         this.dots = []
         this.color = color;
     }

@@ -1,28 +1,20 @@
 import {clusters, dots, groupCount} from "../script.js";
 import {dotGroupsInit} from "./hierarchical_preprocess.js";
+import {drawHierarchicalClusters} from "../draw_utils.js";
+import {Group} from "./hierarchical_group_class.js";
+import {getRandomColor} from "../color_util.js";
 
 function getDotsDistance(firstDot, secondDot) {
     return Math.sqrt(Math.pow(firstDot.x - secondDot.x, 2) + Math.pow(firstDot.y - secondDot.y, 2));
 }
+function clustersMerge(indexClustersPair) {
+    let newCluster = new Group(getRandomColor());
+    newCluster.dots.push(...clusters[indexClustersPair.i].dots, ...clusters[indexClustersPair.j].dots);
 
-function getClustersDistance(firstCluster, secondCluster) {
-    let minDist = Infinity;
-    for (let i = 0; i < firstCluster.dots.length; i++) {
-        for (let j = i + 1; j < secondCluster.dots.length; j++) {
-            let currDist = getDotsDistance(firstCluster.dots[i], secondCluster.dots[j]);
-            minDist = currDist < minDist ? currDist : minDist;
-        }
-    }
-    return minDist;
-}
-function clustersMerge(clustersPair) {
-    let firstClDots = clusters[clustersPair.i].dots.slice(0,clusters[clustersPair.i].dots.length);
-    let secondClDots = clusters[clustersPair.j].dots.slice(0,clusters[clustersPair.j].dots.length);
+    clusters.splice(indexClustersPair.i, 1);
+    clusters.splice(indexClustersPair.j - 1, 1);
 
-    clusters.splice(clustersPair.i, 1);
-    clusters.splice(clustersPair.j, 1);
-
-    return firstClDots.concat(secondClDots);
+    return newCluster;
 }
 
 export function hierarchicalClustering() {
@@ -40,16 +32,35 @@ export function hierarchicalClustering() {
 
     while (clusters.length > groupCount) {
         let minDist = Infinity;
-        let nearestClusterPair = {i: 0, j: 0};
-        for (let i = 0; i < clusters.length; i++) {
-            for (let j = i + 1; j < clusters.length; j++) {
-                let currDist = getClustersDistance(clusters[i], clusters[j]);
+        let nearestClustersPair = {i: 0, j: 0};
+        let i = 0;
+        while (i < clusters.length) {
+            let j = i + 1;
+            while (j < clusters.length) {
+                let currDist = getClustersDistance(i , j);
                 if (currDist < minDist) {
-                    nearestClusterPair = {i: i, j: j};
+                    nearestClustersPair = {i: i, j: j};
                     minDist = currDist;
                 }
+                j++;
             }
+            i++;
         }
-        clustersMerge(nearestClusterPair);
+        clusters.push(clustersMerge(nearestClustersPair));
     }
+
+    drawHierarchicalClusters();
+}
+
+function getClustersDistance(firstIndex, secondIndex) {
+    let minDist = Infinity;
+    clusters[firstIndex].dots.forEach(function (firstDot) {
+        clusters[secondIndex].dots.forEach(function (secondDot) {
+            if (getDotsDistance(firstDot, secondDot) < minDist) {
+                minDist = getDotsDistance(firstDot, secondDot);
+            }
+        })
+    })
+
+    return minDist;
 }

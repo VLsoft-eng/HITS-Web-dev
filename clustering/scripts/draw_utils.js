@@ -56,9 +56,8 @@ export function drawHierarchicalClusters() {
     clear();
     clusters.forEach((c) => {
         c.dots.forEach((d) => {
-            console.log(d.x);
-            ctx.fillStyle = c.color;
             ctx.beginPath();
+            ctx.fillStyle = c.color;
             ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
             ctx.fill();
         })
@@ -68,16 +67,16 @@ export function drawHierarchicalClusters() {
 export function draw() {
     if (!isDrawing) return;
 
-    const rect = canvas.getBoundingClientRect();
     const x = event.offsetX;
     const y = event.offsetY;
 
 
+    let dot = new Dot(x, y);
     if (!isOverlap({x, y})) {
         ctx.fillStyle = 'black';
         ctx.beginPath();
         ctx.arc(x, y, 10, 0, Math.PI * 2);
         ctx.fill();
-        dots.push(new Dot(x, y))
+        dots.push(dot)
     }
 }
