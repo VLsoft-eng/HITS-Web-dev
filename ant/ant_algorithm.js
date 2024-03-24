@@ -68,7 +68,7 @@ function update(paths) {
         }
     }
 
-    for (let i = 0; i < antsCount; i++) {
+    for (let i = 0; i < antCount.value; i++) {
         let path = paths[i];
 
         let len = calculatePathLength(path);
@@ -107,7 +107,7 @@ function antMove(startIndex){
 
 function iterate(){
     let paths = [];
-    for (let i =0; i < antsCount; i++){
+    for (let i =0; i < antCount.value; i++){
         paths.push(antMove(Math.floor(Math.random()*points.length)));
     }
     update(paths);
@@ -136,7 +136,6 @@ function antAlgorithm(){
     visualize();
 }
 
-let antsCount = antCount.value;
 let bestPath =[];
 let pheromoneMatrix = [];
 let bestPathLength = Number.MAX_VALUE;
