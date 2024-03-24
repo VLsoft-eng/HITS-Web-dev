@@ -1,4 +1,4 @@
-import {antCount, slider, iterateCount, points,draw} from './field.js'
+import {antCount, iterateCount, points,draw} from './field.js'
 export {bestPath};
 
 const alpha = 1;
@@ -114,18 +114,24 @@ function iterate(){
 }
 
 function antAlgorithm(){
+    if (points.length < 3) {alert("Слишком мало cities"); return;}
     reset();
     matrixInit();
 
     let i = 0;
     function visualize() {
-        if (i < iterateCount.value){
+        if (i >= iterateCount.value) {draw(bestPath,'blue'); return;}
+        else if (i < iterateCount.value){
+            i++;
             iterate();
+            let outputIterates = document.getElementById("iteratesCount");
             let outputDistance = document.getElementById("shortest-distance-value");
-            outputDistance.innerHTML = bestPathLength;
-            draw(bestPath);
+            outputDistance.innerHTML = Math.floor(bestPathLength);
+            outputIterates.innerHTML = i;
+            draw(bestPath,'navajowhite');
+            console.log(i);
         }
-        setTimeout(visualize, 100 - slider.value);
+        setTimeout(visualize, 0);
     }
     visualize();
 }

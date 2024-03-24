@@ -8,10 +8,12 @@ canvas.addEventListener('click', (e) => {
     const x = e.offsetX;
     const y = e.offsetY;
     points.push({ x, y });
-    draw([]);
+    draw([],pathColor);
 });
 
-function draw(path){
+function draw(path,color){
+    pathColor = color;
+
     if (path.length!==0){
         bestPath = path;
     }
@@ -32,7 +34,7 @@ function draw(path){
 
     for (let i = 1; i < bestPath.length; i++) {
         ctx.beginPath();
-        ctx.strokeStyle = 'navajowhite';
+        ctx.strokeStyle = pathColor;
         ctx.lineWidth = 4;
         ctx.moveTo(points[bestPath[i]].x, points[bestPath[i]].y);
         ctx.lineTo(points[bestPath[i-1]].x, points[bestPath[i-1]].y);
@@ -58,13 +60,15 @@ function draw(path){
 function showLines(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     show = !show;
-    draw([])
+    draw([],pathColor)
 }
 
 function clearField() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     points.splice(0);
     bestPath.splice(0);
+    pathColor = 'navajowhite';
+    outputIterates.innerHTML = iterateCount.value;
 }
 
 //слайдеры
@@ -73,13 +77,6 @@ let outputCount = document.getElementById("antsCount");
 outputCount.innerHTML = antCount.value;
 antCount.oninput = function() {
     outputCount.innerHTML = this.value;
-}
-
-let slider = document.getElementById("range");
-let output = document.getElementById("value");
-output.innerHTML = slider.value;
-slider.oninput = function() {
-    output.innerHTML = this.value;
 }
 
 let iterateCount = document.getElementById("iterates");
@@ -94,8 +91,9 @@ let ctx = canvas.getContext('2d');
 let points = [];
 let show = true;
 let bestPath = [];
+let pathColor = 'navajowhite';
 
-export {points,antCount,slider,iterateCount,draw};
+export {points, antCount, iterateCount, draw};
 
 document.getElementById('show').addEventListener('click', showLines)
 document.getElementById('delete').addEventListener('click', clearField);
