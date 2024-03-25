@@ -2,10 +2,11 @@
 <html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
-    <title>A*</title>
-    <link rel="stylesheet" href="a_star_app.css">
+    <title>Ant Pro</title>
+    <link rel="stylesheet" href="../ant%20app.css">
     <link rel="stylesheet" href="/UI/navbar/navbar.css">
 </head>
+
 <body>
 <nav class="sidebar active load">
     <div class="logo-menu">
@@ -14,7 +15,7 @@
     </div>
     <ul class="list">
         <li class="list-item">
-            <a href="../../HITS-Web-dev/home/home.html">
+            <a href="../../home/home.html">
                 <img class="toggle-btn" src="/source/navbar_icons/home_icon.png" alt="">
                 <span class="link-name" style="--i:1">
                         Home
@@ -22,7 +23,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../../HITS-Web-dev/a-star/a-star.html">
+            <a href="../../a-star/a-star.html">
                 <img src="/source/navbar_icons/a-star_icon.png" alt="">
                 <span class="link-name" style="--i:2">
                         A-Star
@@ -30,7 +31,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../../HITS-Web-dev/clustering/clustering.html">
+            <a href="../../clustering/clustering.html">
                 <img src="/source/navbar_icons/clustering_icon.png" alt="">
                 <span class="link-name" style="--i:3">
                         Clustering
@@ -38,7 +39,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../../HITS-Web-dev/genetic/genetic.html">
+            <a href="../../genetic/genetic.html">
                 <img src="/source/navbar_icons/genetic_icon.png" alt="">
                 <span class="link-name" style="--i:4">
                         Genetic algorithm
@@ -46,7 +47,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../ant/ant_basic/ant.html">
+            <a href="../../../HITS-Web-dev/ant/ant_basic/ant.html">
                 <img src="/source/navbar_icons/ant_icon.png" alt="">
                 <span class="link-name" style="--i:5">
                         Ant algorithm
@@ -54,7 +55,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../../HITS-Web-dev/decision-tree/decision-tree.html">
+            <a href="../../decision-tree/decision-tree.html">
                 <img src="/source/navbar_icons/tree_icon.png" alt="">
                 <span class="link-name" style="--i:6">
                         Decision tree
@@ -62,7 +63,7 @@
             </a>
         </li>
         <li class="list-item">
-            <a href="../../HITS-Web-dev/neural/neural.html">
+            <a href="../../neural/neural.html">
                 <img src="/source/navbar_icons/neural_icon.png" alt="">
                 <span class="link-name" style="--i:7">
                         Neural link
@@ -71,31 +72,40 @@
         </li>
     </ul>
 </nav>
-<script src="/UI/navbar/navbar_script.js"></script>
 
 
 <div id="header">
-    <h1>Code/Websitehog/a_star_algorithm</h1>
+    <h1>Code/Websitehog/ant_algorithm/pro</h1>
 </div>
 
-<div id="mazeBlock">
-    <div id="maze"></div>
-    <div>
-        <button id="start"><img src="../source/a-star_images/start.png" alt="Кнопка «START»"></button>
-        <button id="auto"><img src="../source/a-star_images/auto.png" alt="Кнопка «AUTOGENERATE MAZE»"></button>
-        <button id="add"><img src="../source/a-star_images/set.png" alt="Кнопка «ADD START AND FINISH»"></button>
-        <button id="delete"><img src="../source/a-star_images/delete.png" alt="Кнопка «DELETE FIELD»"></button>
+<div class="container">
+    <div id="Block">
+        <canvas id="field" width="750" height="500"></canvas>
+    </div>
+    <div id="interfaceBlock">
+        <div class="button-container">
+            <div><button id="start"><img src="../../source/ant_algorithm_images/start.png" alt="Кнопка «START»"></button></div>
+            <div><button id="addColony"><img src="../../source/ant_algorithm_images/colony.png" alt="Кнопка «ADD COLONY»"></button></div>
+            <div><button id="addFood"><img src="../../source/ant_algorithm_images/food.png" alt="Кнопка «ADD FOOD»"></button></div>
+            <div><button id="addWall"><img src="../../source/ant_algorithm_images/wall.png" alt="Кнопка «DELETE»"></button></div>
+            <div><button id="delete"><img src="../../source/ant_algorithm_images/delete.png" alt="Кнопка «DELETE»"></button></div>
+        </div>
+        <div class="slider-container">
+            <label for="ants"></label><input type="range" min="1" max="400" value="100" step="10" class="slider" id="ants">
+            <p>ants: <span id="antsCount"></span></p>
+            <label for="range"></label><input type="range" min="0" max="100" value="50" class="slider" id="range">
+            <p>speed: <span id="value"></span> %</p>
+        </div>
     </div>
 </div>
 
-<div class="slider-container">
-    <label for="range"></label><input type="range" min="0" max="100" value="50" class="slider" id="range">
-    <p>speed: <span id="value"></span> %</p>
+
+<div class="link-container">
+    <a id="link" href="../ant_basic/ant.html">basic version</a>
 </div>
 
-<script src="maze.js"></script>
-<script src="a_star_algorithm.js"></script>
-<script src="prima_maze_generation.js"></script>
-
+<script src="/UI/navbar/navbar_script.js"></script>
+<script type="module" src="ant_algorithm_pro.js"></script>
+<script type="module" src="field.js"></script>
 </body>
 </html>
