@@ -118,7 +118,7 @@ function antAlgorithm(){
     shortestPath.len = Number.MAX_VALUE;
 
     for (let i = 0; i < antCount.value;i++){
-        ants.push(new Ant(colonyPos.x - 20 + Math.floor(Math.random()*10) ,colonyPos.y - 20 + Math.floor(Math.random()*10),'searching',dir[Math.floor(Math.random()*4)]));
+        ants.push(new Ant(colonyPos.x,colonyPos.y,'searching',dir[Math.floor(Math.random()*4)]));
     }
     function visualize(){
         for (let i =0;i < antCount.value;i++){

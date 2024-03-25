@@ -86,6 +86,13 @@ iterateCount.oninput = function() {
     outputIterates.innerHTML = this.value;
 }
 
+let slider = document.getElementById("range");
+let output = document.getElementById("value");
+output.innerHTML = slider.value;
+slider.oninput = function() {
+    output.innerHTML = this.value;
+}
+
 let ctx = canvas.getContext('2d');
 
 let points = [];
@@ -93,7 +100,7 @@ let show = true;
 let bestPath = [];
 let pathColor = 'navajowhite';
 
-export {points, antCount, iterateCount, draw};
+export {slider, points, antCount, iterateCount, draw};
 
 document.getElementById('show').addEventListener('click', showLines)
 document.getElementById('delete').addEventListener('click', clearField);

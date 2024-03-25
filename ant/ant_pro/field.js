@@ -85,7 +85,7 @@ function drawAnts(ants){
         drawFood(foods[i].x,foods[i].y);
     }
     for (let i = 0;i<ants.length;i++){
-        ctx.drawImage(antImage,ants[i].x,ants[i].y,35,35);
+        ctx.drawImage(antImage,ants[i].x,ants[i].y,20,20);
     }
 }
 
