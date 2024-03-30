@@ -1,3 +1,4 @@
+import {lock,unlock} from './maze.js';
 document.addEventListener("DOMContentLoaded", function() {
 
     let slider = document.getElementById("range");
@@ -20,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     function matrixInit(mazeMatrix,cells) {
-        const N = 20;
         let start;
         let end;
 
@@ -54,17 +54,19 @@ document.addEventListener("DOMContentLoaded", function() {
                     visualize();
                 }, 100 - slider.value);
             }
+            else{unlock();}
         }
         visualize();
     }
 
     function a_star() {
-        const N = 20;
+        lock();
         const cells = document.querySelectorAll('.cell');
         const {mazeMatrix, start, end} = matrixInit([], cells);
 
         if (start == null || end == null) {
             alert("Постабде пж стартп и финимш");
+            unlock();
             return;
         }
 
@@ -87,6 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
         function visualizeAlg() {
             if (queue.length === 0) {
                 alert("Пути Нед!1!!1!");
+                unlock();
                 return 0;
             } else if (queue.length > 0) {
 
@@ -162,5 +165,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }
         visualizeAlg();
     }
+
+    const N = 25;
     document.getElementById('start').addEventListener('click', a_star);
 });
