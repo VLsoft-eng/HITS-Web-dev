@@ -1,7 +1,17 @@
-import {ctx, canvas, clusters, squareSize, minDistance, dots} from "./script.js";
+import {
+    ctx,
+    canvas,
+    squareSize,
+    minDistance,
+    dots,
+    hierarchicalClusters,
+    kmeansClusters,
+} from "./script.js";
 import {Dot} from "./dot_class.js";
 
 let isDrawing = false;
+
+
 export function stopDrawing() {
     isDrawing = false;
 }
@@ -17,7 +27,8 @@ export function clear() {
 
 export function clearAndReset() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    clusters.length = 0;
+    hierarchicalClusters.length = 0;
+    kmeansClusters.length = 0;
     dots.length = 0;
 }
 function isOverlap(newDot) {
@@ -35,36 +46,35 @@ function isOverlap(newDot) {
 }
 
 export function drawKMeansClusters() {
-    clear();
-    clusters.forEach((c) => {
+    kmeansClusters.forEach((c) => {
         c.dots.forEach((d) => {
-            console.log(d.x);
-            ctx.fillStyle = c.color;
             ctx.beginPath();
-            ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.moveTo(d.x, d.y);
+            ctx.lineTo(c.center.x + 5, c.center.y + 5);
+            ctx.stroke();
         })
         ctx.beginPath();
-        ctx.fillStyle = c.color;
+        ctx.fillStyle = "#777";
         ctx.rect(c.center.x, c.center.y, squareSize, squareSize);
         ctx.stroke();
     })
 }
 
+
 export function drawHierarchicalClusters() {
-    clear();
-    clusters.forEach((c) => {
+    hierarchicalClusters.forEach((c) => {
         c.dots.forEach((d) => {
             ctx.beginPath();
+            ctx.arc(d.x, d.y, 10, Math.PI, 2 * Math.PI);
+            ctx.closePath();
             ctx.fillStyle = c.color;
-            ctx.arc(d.x, d.y, 10, 0, Math.PI * 2);
             ctx.fill();
+
         })
     })
 }
 
 export function drawDefault() {
-    clear();
     dots.forEach((dot) => {
         ctx.beginPath();
         ctx.fillStyle = 'black';

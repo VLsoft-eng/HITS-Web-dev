@@ -1,11 +1,22 @@
 import {drawKMeansClusters} from "../draw_utils.js";
-import {groupsInit} from "./KMeans_preprocess.js";
-import {canvas, clusters, dots, groupCount} from "../script.js";
+import {canvas, kmeansClusters, dots, groupCount} from "../script.js";
 import {getDistance} from "../metrics.js";
+import {Group} from "./KMeans_group_class.js";
+import {getRandomColor} from "../color_util.js";
+
+export function KMeansGroupsInit () {
+
+    kmeansClusters.length = 0;
+
+    for (let i = 0; i < groupCount; i++) {
+        let g = new Group(i, getRandomColor());
+        kmeansClusters.push(g);
+    }
+}
 
 export function moveCenter() {
     let finished = false;
-    clusters.forEach((group) => {
+    kmeansClusters.forEach((group) => {
         finished = true;
 
         if (group.dots.length === 0) {
@@ -29,11 +40,11 @@ export function moveCenter() {
 
 
 export function updateGroups() {
-    clusters.forEach((g) => {g.dots = [];})
+    kmeansClusters.forEach((g) => {g.dots = [];})
     dots.forEach((dot) => {
         let min = Infinity;
         let group;
-        clusters.forEach((g) => {
+        kmeansClusters.forEach((g) => {
             let d = getDistance(g.center, dot);
             if (d < min) {
                 min = d;
@@ -46,11 +57,12 @@ export function updateGroups() {
 }
 
 function isCentersChange(previousClusters) {
-    for (let i = 0; i < clusters.length; i++) {
+    for (let i = 0; i < kmeansClusters.length; i++) {
         let firstCenter = previousClusters[i].center;
-        let secondCenter = clusters[i].center;
+        let secondCenter = kmeansClusters[i].center;
 
         if (Math.sqrt(Math.pow(firstCenter.x - secondCenter.x, 2) + Math.pow(firstCenter.y - secondCenter.y, 2)) > 0) {
+            console.log(1)
             return true;
         }
     }
@@ -58,24 +70,13 @@ function isCentersChange(previousClusters) {
 }
 
 export function kMeansClustering() {
-    if (dots.length === 0) {
-        alert("Нанесите частицы!");
-        return;
-    }
-
-    groupsInit(groupCount);
-
-    if (dots.length < clusters.length) {
-        alert("Частиц меньше, чем кластеров!");
-        return;
-    }
-    let previousClusters = clusters.map(cluster => ({ ...cluster }));
+    let previousClusters = kmeansClusters.map(cluster => ({ ...cluster }));
 
     for (;;) {
+        previousClusters = kmeansClusters.map(cluster => ({ ...cluster }));
         updateGroups();
         moveCenter();
         if (!isCentersChange(previousClusters)) break;
-        previousClusters = clusters.map(cluster => ({ ...cluster }));
     }
     drawKMeansClusters();
 }
