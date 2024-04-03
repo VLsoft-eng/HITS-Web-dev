@@ -5,7 +5,7 @@ import {
     minDistance,
     dots,
     hierarchicalClusters,
-    kmeansClusters,
+    kmeansClusters, dbscanClusters,
 } from "./script.js";
 import {Dot} from "./dot_class.js";
 
@@ -70,6 +70,19 @@ export function drawHierarchicalClusters() {
             ctx.fillStyle = c.color;
             ctx.fill();
 
+        })
+    })
+}
+
+export function drawDbscanClusters() {
+    console.log(dbscanClusters.length + "sos")
+    dbscanClusters.forEach((c) => {
+        c.dots.forEach((d) => {
+            ctx.beginPath();
+            ctx.arc(d.x, d.y, 10, 0, Math.PI);
+            ctx.closePath();
+            ctx.fillStyle = c.color;
+            ctx.fill();
         })
     })
 }

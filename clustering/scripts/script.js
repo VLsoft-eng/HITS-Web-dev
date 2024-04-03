@@ -3,10 +3,17 @@ import {clearAndReset, draw, startDrawing, stopDrawing} from "./draw_utils.js";
 import {main_clustering} from "./main_clustering.js"
 export let kmeansClusters = []
 export let hierarchicalClusters = []
+export let dbscanClusters = [];
 export let dots = [];
 export let minDistance = 20;
 export let squareSize = 10;
 export let groupCount = 5;
+export let dbscanEps = 50;
+export let dbscanPointCount = 5;
+export let dbscanDotsCluster = [];
+
+export let dbscanUsedDots = [];
+
 
 export const canvas = document.getElementById('cluster_canvas');
 export const btn = document.getElementById('draw_button');
