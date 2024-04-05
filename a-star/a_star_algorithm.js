@@ -166,6 +166,6 @@ document.addEventListener("DOMContentLoaded", function() {
         visualizeAlg();
     }
 
-    const N = 25;
+    const N = 21;
     document.getElementById('start').addEventListener('click', a_star);
 });

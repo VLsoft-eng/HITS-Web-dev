@@ -1,7 +1,7 @@
 const maze = document.getElementById("maze");
 
-for (let i = 0; i < 25; i++) {
-    for (let j = 0; j < 25; j++) {
+for (let i = 0; i < 21; i++) {
+    for (let j = 0; j < 21; j++) {
         let cell = document.createElement("div");
         cell.classList.add("cell");
 

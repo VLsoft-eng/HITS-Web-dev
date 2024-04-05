@@ -65,7 +65,7 @@ function prima() {
         }
     }
 
-    let currentPoint = new Point(random(0, N), random(0, N));
+    let currentPoint = new Point(0, 0);
     maze[currentPoint.row][currentPoint.column].makeClear();
     cells[currentPoint.row * N + currentPoint.column].classList.add('start');
     lock();
@@ -150,7 +150,7 @@ function prima() {
 }
 
 const cells = document.querySelectorAll('.cell');
-const N = 25;
+const N = 21;
 
 document.getElementById('auto').addEventListener('click', prima);
 
