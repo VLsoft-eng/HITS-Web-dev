@@ -1,4 +1,4 @@
-import {hierarchicalClusters, dots, kmeansClusters} from "./script.js";
+import {hierarchicalClusters, dots, kmeansClusters, hierarchicalClustersCount, kmeansClustersCount} from "./script.js";
 import {hierarchicalGroupsInit} from "./hierarchical/hierarchical.js";
 import {KMeansGroupsInit} from "./KMeans/KMeans.js";
 import {kMeansClustering} from "./KMeans/KMeans.js";
@@ -15,7 +15,7 @@ export function main_clustering() {
     hierarchicalGroupsInit();
     KMeansGroupsInit();
 
-    if (dots.length < hierarchicalClusters.length || dots.length < kmeansClusters.length) {
+    if (dots.length < hierarchicalClustersCount || dots.length < kmeansClustersCount) {
         alert("Частиц меньше, чем кластеров!");
         return;
     }
