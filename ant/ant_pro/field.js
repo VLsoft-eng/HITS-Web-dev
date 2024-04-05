@@ -1,27 +1,37 @@
-import {reset} from './ant_algorithm_pro.js'
+import {reset,pheromones} from './ant_algorithm_pro.js'
 
 const canvas = document.getElementById('field');
 let ctx = canvas.getContext('2d');
+function startDrawing(e){
+    isDrawing = true;
+    draw(e);
+}
 
-canvas.addEventListener('click', (e) => {
-    let x = e.offsetX, y = e.offsetY;
-    if (drawingColony && !colonyPos.x){
-        drawColony(x,y);
+function endDrawing(){
+    isDrawing = false;
+}
 
-        colonyPos.x = x;
-        colonyPos.y = y;
+function draw(e){
+    if (isDrawing) {
+        let x = e.offsetX, y = e.offsetY;
+        if (drawingColony && !colonyPos.x) {
+            drawColony(x, y);
+
+            colonyPos.x = x;
+            colonyPos.y = y;
+        }
+
+        if (drawingWalls) {
+            drawWall(x, y);
+            walls.push({x, y});
+        }
+
+        if (drawingFood) {
+            drawFood(x, y);
+            foods.push({x, y});
+        }
     }
-
-    if (drawingWalls){
-        drawWall(x,y);
-        walls.push({x,y});
-    }
-
-    if (drawingFood){
-        drawFood(x,y);
-        foods.push({x,y});
-    }
-});
+}
 
 function drawColony(x,y){
     ctx.beginPath();
@@ -32,14 +42,14 @@ function drawColony(x,y){
 }
 function drawWall(x,y){
     ctx.beginPath();
-    ctx.rect(x, y, 20, 20);
+    ctx.rect(x - 10, y - 10, 20, 20);
     ctx.fillStyle = 'navajowhite';
     ctx.fill();
     ctx.closePath();
 }
 function drawFood(x,y) {
     ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.rect(x - 10, y - 10, 20, 20);
     ctx.fillStyle = 'green';
     ctx.fill();
     ctx.closePath();
@@ -77,15 +87,22 @@ function switchFood(){
 
 function drawAnts(ants){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0;i < pheromones.length;i++){
+        ctx.beginPath();
+        ctx.arc(pheromones[i].x, pheromones[i].y , 1, 0, Math.PI * 2);
+        ctx.fillStyle = pheromones[i].color;
+        ctx.fill();
+        ctx.closePath();
+    }
     if (colonyPos.x){drawColony(colonyPos.x, colonyPos.y);}
     for (let i = 0;i<walls.length;i++){
         drawWall(walls[i].x,walls[i].y);
     }
+    for (let i = 0;i<ants.length;i++){
+        ctx.drawImage(antImage,ants[i].x - 10,ants[i].y - 10,40,40);
+    }
     for (let i = 0;i<foods.length;i++){
         drawFood(foods[i].x,foods[i].y);
-    }
-    for (let i = 0;i<ants.length;i++){
-        ctx.drawImage(antImage,ants[i].x,ants[i].y,20,20);
     }
 }
 
@@ -116,6 +133,7 @@ let colonyPos = { x: null, y: null };
 let drawingColony = false;
 let drawingWalls = false;
 let drawingFood = false;
+let isDrawing = false;
 let walls = [];
 let foods = [];
 
@@ -124,6 +142,9 @@ export {slider,antCount,colonyPos,drawAnts,ctx};
 let antImage = new Image();
 antImage.src = '../../source/ant_algorithm_images/ant.png';
 
+canvas.addEventListener('mousedown', startDrawing);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', endDrawing);
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addColony').addEventListener('click', switchColony);
     document.getElementById('addWall').addEventListener('click', switchWalls);

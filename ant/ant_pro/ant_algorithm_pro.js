@@ -15,6 +15,7 @@ class Ant{
 function reset(){
     ants=[];
     shortestPath = [];
+    pheromones = [{x:null,y:null, color: undefined}];
 }
 
 function getColorAtPosition(x, y) {
@@ -25,6 +26,16 @@ function getColorAtPosition(x, y) {
 
 
 function antMove(ant){
+    let x = ant.x;
+    let y = ant.y;
+    // оставление феромона
+    if (ant.condition === 'returning') {
+        let color = 'yellow';
+        pheromones.push({x, y, color});
+        if (pheromones.length > 30000) {
+            pheromones.shift();
+        }
+    }
     if (ant.condition === 'start'){
         if (ant.path.length >= shortestPath.length){
             ant.condition='returning';
@@ -48,10 +59,10 @@ function antMove(ant){
     }
 
     let random = Math.random();
-    let color = getColorAtPosition(ant.x,ant.y);
-
+    let colorTop = getColorAtPosition(ant.x,ant.y);
+    let colorBot = getColorAtPosition(ant.x+10,ant.y+10);
     // проверка на еду
-    if (color.r === 0 && color.g === 128 && color.b === 0){
+    if (colorTop.r === 0 && colorTop.g === 128 && colorTop.b === 0 || colorBot.r === 0 && colorBot.g === 128 && colorBot.b === 0){
         ant.condition = 'returning';
         if (ant.path.length < shortestPath.len){
             shortestPath = ant.path.slice();
@@ -97,8 +108,11 @@ function antMove(ant){
         }
     }
 
+    let color = 'red';
+    pheromones.push({x,y,color});
+
     // проверка на стенку
-    if (color.r === 255 && color.g === 222 && color.b === 173){
+    if (colorTop.r === 255 && colorTop.g === 222 && colorTop.b === 173 || colorBot.r === 255 && colorBot.g === 222 && colorBot.b === 173){
         ant.x = ant.path[ant.path.length-1].x;
         ant.y = ant.path[ant.path.length-1].y;
         ant.path.pop();
@@ -131,7 +145,8 @@ function antAlgorithm(){
 }
 let ants = [];
 let shortestPath = [];
-export{reset};
+let pheromones = [{x: null,y:null, color: undefined}];
+export{reset,pheromones};
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('start').addEventListener('click', antAlgorithm);
 });
