@@ -75,7 +75,6 @@ export function drawHierarchicalClusters() {
 }
 
 export function drawDbscanClusters() {
-    console.log(dbscanClusters.length + "sos")
     dbscanClusters.forEach((c) => {
         c.dots.forEach((d) => {
             ctx.beginPath();

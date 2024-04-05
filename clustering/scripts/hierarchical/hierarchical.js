@@ -1,4 +1,4 @@
-import {dots, groupCount, hierarchicalClusters} from "../script.js";
+import {dots, hierarchicalClusters, hierarchicalClustersCount} from "../script.js";
 import {drawHierarchicalClusters} from "../draw_utils.js";
 import {Group} from "./hierarchical_group_class.js";
 import {getRandomColor} from "../color_util.js";
@@ -29,7 +29,7 @@ function clustersMerge(indexClustersPair) {
 
 export function hierarchicalClustering() {
 
-    while (hierarchicalClusters.length > groupCount) {
+    while (hierarchicalClusters.length > hierarchicalClustersCount) {
         let minDist = Infinity;
         let nearestClustersPair = {i: 0, j: 0};
         let i = 0;

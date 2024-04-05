@@ -101,8 +101,15 @@
             </div>
 
             <div id="slider_container">
-                <label for="select_clusters">Select clusters count :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_clusters">
-                <p>Clusters: <span id="clusters_count"></span></p>
+                <label for="select_kmeans_clusters">K-Means++ :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_kmeans_clusters">
+                <p>Clusters: <span id="kmeans_clusters_count"></span></p>
+                <label for="select_hierarchical_clusters">Hierarchical :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_hierarchical_clusters">
+                <p>Clusters: <span id="hierarchical_clusters_count"></span></p>
+                <label for="select_dbscan_radius">DBSCAN :</label> <input type="range" min="1" max="200" value="11" class="slider" id="select_dbscan_radius">
+                <p>Radius: <span id="dbscan_radius"></span></p>
+                <input type="range" min="1" max="50" value="11" class="slider" id="select_dbscan_radius_dots">
+                <p>Dots in radius: <span id="dbscan_dots"></span></p>
+
             </div>
 
         </div>

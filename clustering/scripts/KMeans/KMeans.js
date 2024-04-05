@@ -1,5 +1,5 @@
 import {drawKMeansClusters} from "../draw_utils.js";
-import {canvas, kmeansClusters, dots, groupCount} from "../script.js";
+import {canvas, kmeansClusters, dots, kmeansClustersCount} from "../script.js";
 import {getDistance} from "../metrics.js";
 import {Group} from "./KMeans_group_class.js";
 import {getRandomColor} from "../color_util.js";
@@ -8,7 +8,7 @@ export function KMeansGroupsInit () {
 
     kmeansClusters.length = 0;
 
-    for (let i = 0; i < groupCount; i++) {
+    for (let i = 0; i < kmeansClustersCount; i++) {
         let g = new Group(i, getRandomColor());
         kmeansClusters.push(g);
     }

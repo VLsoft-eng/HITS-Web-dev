@@ -49,7 +49,6 @@ export function dbscanClustering() {
             let neighbors = getNeighbors(dots[i]);
             if (neighbors.length < dbscanPointCount) {
                 dbscanDotsCluster[i] = -1;
-                console.log(2)
             }
             else {
                 let cluster = new Group(getRandomColor());

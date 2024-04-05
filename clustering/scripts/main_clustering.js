@@ -1,4 +1,4 @@
-import {hierarchicalClusters, dots, groupCount, kmeansClusters, dbscanClusters} from "./script.js";
+import {hierarchicalClusters, dots, kmeansClusters} from "./script.js";
 import {hierarchicalGroupsInit} from "./hierarchical/hierarchical.js";
 import {KMeansGroupsInit} from "./KMeans/KMeans.js";
 import {kMeansClustering} from "./KMeans/KMeans.js";
