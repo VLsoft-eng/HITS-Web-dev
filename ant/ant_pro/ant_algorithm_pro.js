@@ -1,152 +1,168 @@
-import{slider,drawAnts,antCount,colonyPos,ctx} from "./field.js";
+import{slider,drawMap,antCount,colonyPos,ctx} from "./field.js";
 
-const dir = ['top','bottom','left','right'];
-
-class Ant{
-    constructor(x,y,condition,direction) {
+class Ant {
+    constructor(x, y) {
         this.x = x;
         this.y = y;
-        this.condition = condition;
-        this.direction = direction;
-        this.path = [{x:colonyPos.x,y:colonyPos.y}];
+        this.direction = Math.random() * 2 * Math.PI;
+        this.speed = Math.random() * 2 + 1;
+        this.foundFood = false;
+        this.following = false;
+        this.pheromonePath = [];
+        this.time = 0;
+    }
+
+    moveAnt() {
+        this.direction += (Math.random() - 0.5) * 0.5;
+        this.x += this.speed * Math.cos(this.direction);
+        this.y += this.speed * Math.sin(this.direction);
+        return [this.x, this.y];
+    }
+
+    followAnt() {
+        const searchRadius = 10;
+        const followAngle = Math.PI / 4;
+
+        let maxPheromoneDensity = -Infinity;
+        let minPheromoneDensity = +Infinity;
+        let maxPheromoneX = this.x;
+        let maxPheromoneY = this.y;
+        let minPheromoneX = this.x;
+        let minPheromoneY = this.y;
+
+        for (let dx = -searchRadius; dx <= searchRadius; dx++) {
+            for (let dy = -searchRadius; dy <= searchRadius; dy++) {
+                const newX = Math.floor(this.x) + dx;
+                const newY = Math.floor(this.y) + dy;
+
+                if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
+                    const pheromoneDensity = pheromones[newX][newY];
+                    if (pheromoneDensity > maxPheromoneDensity) {
+                        maxPheromoneDensity = pheromoneDensity;
+                        maxPheromoneX = newX;
+                        maxPheromoneY = newY;
+                    }
+                    if (pheromoneDensity < minPheromoneDensity){
+                        minPheromoneDensity = pheromoneDensity;
+                        minPheromoneX = newX;
+                        minPheromoneY = newY;
+                    }
+                }
+            }
+        }
+
+        const angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
+        const angleToMinPheromone= Math.atan2(minPheromoneY - this.y, minPheromoneX - this.x);
+        if (!this.foundFood) {
+            if (angleToMaxPheromone - this.direction > followAngle) {
+                this.direction += followAngle;
+            } else if (angleToMaxPheromone - this.direction < -followAngle) {
+                this.direction -= followAngle;
+            } else {
+                this.direction = angleToMaxPheromone;
+            }
+        }
+        else {
+            if (angleToMinPheromone - this.direction > followAngle) {
+                this.direction += followAngle;
+            } else if (angleToMinPheromone - this.direction < -followAngle) {
+                this.direction -= followAngle;
+            } else {
+                this.direction = angleToMinPheromone;
+            }
+        }
+
+        this.x += this.speed * Math.cos(this.direction);
+        this.y += this.speed * Math.sin(this.direction);
+    }
+
+    updateAnt(){
+        if (this.time <299){this.time +=1;}
+        let prevMove=[this.x,this.y];
+
+        if (Math.abs(this.x - colonyPos.x) < 20 && Math.abs(this.y - colonyPos.y) < 20 && this.foundFood === true){
+            this.direction += Math.PI;
+            this.foundFood = false;
+            this.following = false;
+            this.time = 0;
+        }
+        if (!this.following && !this.foundFood){
+            if ( pheromones[Math.floor(this.x)][Math.floor(this.y)] > 0){
+                this.following = true;
+            }
+        }
+
+        if (!this.following){ this.moveAnt();}
+        else{this.followAnt();}
+
+        // выход за границы или стенка
+        if (this.x < 0 || this.x > 750 || this.y < 0 || this.y > 500 || map[Math.floor(this.x)][Math.floor(this.y)] === -1){
+            this.x = prevMove[0];
+            this.y = prevMove[1];
+            this.direction += Math.PI;
+        }
+        // еда
+        if (map[Math.floor(this.x)][Math.floor(this.y)] === -2 && this.foundFood === false){
+            this.foundFood = true;
+            this.following = false;
+            this.direction += Math.PI;
+            this.time = 0;
+        }
+
+        // оставление феромонов
+        if (this.foundFood === false){
+            pheromones[Math.floor(this.x)][Math.floor(this.y)] = -400;
+        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)] = 300; }
+        this.pheromonePath.push({x:Math.floor(this.x),y:Math.floor(this.y)});
+        if (this.pheromonePath.length > 300){
+            this.pheromonePath.shift();
+        }
     }
 }
 
 function reset(){
-    ants=[];
-    shortestPath = [];
-    pheromones = [{x:null,y:null, color: undefined}];
+    ants = [];
+    for (let i = 0;i<750;i++){
+        pheromones[i]=[];
+    }
 }
 
-function getColorAtPosition(x, y) {
-    const imageData = ctx.getImageData(x, y, 1, 1);
-    const rgb = imageData.data;
-    return {r:rgb[0],g:rgb[1],b: rgb[2]};
-}
-
-
-function antMove(ant){
-    let x = ant.x;
-    let y = ant.y;
-    // оставление феромона
-    if (ant.condition === 'returning') {
-        let color = 'yellow';
-        pheromones.push({x, y, color});
-        if (pheromones.length > 30000) {
-            pheromones.shift();
+function mapInit(){
+    for (let i = 0;i<750;i++){
+        map[i]=[];
+        pheromones[i]=[];
+        for (let j = 0; j < 500; j++) {
+            pheromones[i][j] = 0;
         }
     }
-    if (ant.condition === 'start'){
-        if (ant.path.length >= shortestPath.length){
-            ant.condition='returning';
-            return;
-        }
-        ant.x = shortestPath[ant.path.length].x;
-        ant.y = shortestPath[ant.path.length].y;
-        ant.path.push({x:ant.x,y:ant.y});
-        return;
-    }
-    if (ant.condition === 'returning' && ant.path.length !== 0){
-        ant.x = ant.path[ant.path.length-1].x;
-        ant.y = ant.path[ant.path.length-1].y;
-        ant.path.pop();
-        console.log(ant.path);
-        return;
-    } if (ant.path.length === 0) {
-        ant.condition = 'start';
-        ant.path.push({x:colonyPos.x,y:colonyPos.y})
-        return;
-    }
-
-    let random = Math.random();
-    let colorTop = getColorAtPosition(ant.x,ant.y);
-    let colorBot = getColorAtPosition(ant.x+10,ant.y+10);
-    // проверка на еду
-    if (colorTop.r === 0 && colorTop.g === 128 && colorTop.b === 0 || colorBot.r === 0 && colorBot.g === 128 && colorBot.b === 0){
-        ant.condition = 'returning';
-        if (ant.path.length < shortestPath.len){
-            shortestPath = ant.path.slice();
-            shortestPath.len = ant.path.length;
-            console.log(shortestPath);
-        }
-        return;
-    }
-    // обновление позиций
-    if (ant.direction === 'top'){
-        if (ant.y<=1) {ant.direction = 'bottom';}
-        ant.y--;
-        if (random>0.5){
-            ant.x--;
-        } else if (random<=0.5){
-            ant.x++;
-        }
-    } else if (ant.direction === 'bottom'){
-        if (ant.y>=499) {ant.direction = 'top';}
-        ant.y++;
-        if (random>0.5){
-            ant.x--;
-        } else if (random<=0.5){
-            ant.x++;
-        }
-
-    } else if (ant.direction === 'left'){
-        if (ant.x<=1){ant.direction = 'right';}
-        ant.x--;
-        if (random>0.5){
-            ant.y--;
-        } else if (random<=0.5){
-            ant.y++;
-        }
-
-    } else if (ant.direction === 'right'){
-        if (ant.x>=750){ant.direction='left';}
-        ant.x++;
-        if (random>0.5){
-            ant.y--;
-        } else if (random<=0.5){
-            ant.y++;
-        }
-    }
-
-    let color = 'red';
-    pheromones.push({x,y,color});
-
-    // проверка на стенку
-    if (colorTop.r === 255 && colorTop.g === 222 && colorTop.b === 173 || colorBot.r === 255 && colorBot.g === 222 && colorBot.b === 173){
-        ant.x = ant.path[ant.path.length-1].x;
-        ant.y = ant.path[ant.path.length-1].y;
-        ant.path.pop();
-        ant.direction = dir[Math.floor(Math.random()*4)];
-        return;
-    }
-
-    if (random<0.01){
-        ant.direction = dir[Math.floor(Math.random()*4)];
-    }
-    ant.path.push({x:ant.x,y:ant.y});
 }
 
 function antAlgorithm(){
     reset();
-    if (!colonyPos.x) {alert("Сначала поставьте колонию"); return;}
-    shortestPath.len = Number.MAX_VALUE;
-
-    for (let i = 0; i < antCount.value;i++){
-        ants.push(new Ant(colonyPos.x,colonyPos.y,'searching',dir[Math.floor(Math.random()*4)]));
+    if (colonyPos.x === null) {alert('Поставьте колонию'); return;}
+    // создание муравьев
+    for (let i = 0;i<antCount.value;i++){
+        ants.push(new Ant(colonyPos.x,colonyPos.y));
     }
     function visualize(){
-        for (let i =0;i < antCount.value;i++){
-            antMove(ants[i]);
+        for (let i = 0;i<ants.length;i++){
+            ants[i].updateAnt();
         }
-        drawAnts(ants);
-        setTimeout(visualize,100-slider.value);
+        drawMap(ants);
+        if (ants.length > 0) {
+            requestAnimationFrame(visualize);
+        }
     }
-    visualize();
+    if (ants.length > 0){
+        visualize();
+    }
 }
+let map = [];
+let pheromones = [];
 let ants = [];
-let shortestPath = [];
-let pheromones = [{x: null,y:null, color: undefined}];
-export{reset,pheromones};
+
+export {map,pheromones,reset,ants};
 document.addEventListener('DOMContentLoaded', () => {
+    mapInit();
     document.getElementById('start').addEventListener('click', antAlgorithm);
 });
