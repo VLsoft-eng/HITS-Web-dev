@@ -96,41 +96,35 @@ function switchFood(){
     document.getElementById('addFood').disabled = true;
 }
 
-function drawMap(ants){
+function drawMap(ants) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < ants.length; i++) {
         for (let j = 0; j < ants[i].pheromonePath.length; j++) {
             const x = ants[i].pheromonePath[j].x;
             const y = ants[i].pheromonePath[j].y;
-            if (pheromones[x][y] < 0) {
-                ctx.beginPath();
-                ctx.arc(x, y, 1, 0, Math.PI * 2);
-                ctx.fillStyle = 'purple';
-                ctx.fill();
-                ctx.closePath();
-                pheromones[x][y] += 1;
+            if (pheromones[x][y] < -0.001) {
+                ctx.fillStyle = 'mediumpurple';
+                ctx.fillRect(x, y, 1, 1);
+                pheromones[x][y] *= 0.99;
             }
-            if (pheromones[x][y] > 0) {
-                ctx.beginPath();
-                ctx.arc(x, y, 1, 0, Math.PI * 2);
-                ctx.fillStyle = 'yellow';
-                ctx.fill();
-                ctx.closePath();
-                pheromones[x][y] -= 1;
+            else if (pheromones[x][y] > 0.001){
+                ctx.fillStyle = 'lawngreen';
+                ctx.fillRect(x, y, 1, 1);
+                pheromones[x][y] *= 0.99;
             }
+            else {
+                ants[i].pheromonePath.splice(j,1);
+            }
+
         }
+        ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 40, 40);
     }
-    for (let i = 0;i<ants.length;i++){
-        ctx.drawImage(antImage,ants[i].x - 10,ants[i].y - 10,40,40);
-    }
-    for (let i = 0; i <food.length;i++){
-        drawFood(food[i].x,food[i].y);
-    }
-    for (let i = 0; i <walls.length;i++){
-        drawWall(walls[i].x,walls[i].y);
-    }
-    if (colonyPos.x){drawColony(colonyPos.x, colonyPos.y);}
+
+    if (colonyPos.x) drawColony(colonyPos.x, colonyPos.y);
+    for (let i = 0; i < food.length; i++) drawFood(food[i].x, food[i].y);
+    for (let i = 0; i < walls.length; i++) drawWall(walls[i].x, walls[i].y);
 }
+
 
 function clear(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);

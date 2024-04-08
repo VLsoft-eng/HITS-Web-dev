@@ -9,22 +9,20 @@ class Ant {
         this.foundFood = false;
         this.following = false;
         this.pheromonePath = [];
-        this.time = 0;
+        this.hot = 1;
     }
 
     moveAnt() {
         this.direction += (Math.random() - 0.5) * 0.5;
         this.x += this.speed * Math.cos(this.direction);
         this.y += this.speed * Math.sin(this.direction);
-        return [this.x, this.y];
     }
 
     followAnt() {
-        const searchRadius = 10;
-        const followAngle = Math.PI / 4;
+        const searchRadius = 30;
 
-        let maxPheromoneDensity = -Infinity;
-        let minPheromoneDensity = +Infinity;
+        let maxPheromone = -Infinity;
+        let minPheromone = +Infinity;
         let maxPheromoneX = this.x;
         let maxPheromoneY = this.y;
         let minPheromoneX = this.x;
@@ -36,14 +34,14 @@ class Ant {
                 const newY = Math.floor(this.y) + dy;
 
                 if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
-                    const pheromoneDensity = pheromones[newX][newY];
-                    if (pheromoneDensity > maxPheromoneDensity) {
-                        maxPheromoneDensity = pheromoneDensity;
+                    const currentPheromone = pheromones[newX][newY];
+                    if (currentPheromone > maxPheromone) {
+                        maxPheromone = currentPheromone;
                         maxPheromoneX = newX;
                         maxPheromoneY = newY;
                     }
-                    if (pheromoneDensity < minPheromoneDensity){
-                        minPheromoneDensity = pheromoneDensity;
+                    if (currentPheromone < minPheromone){
+                        minPheromone = currentPheromone;
                         minPheromoneX = newX;
                         minPheromoneY = newY;
                     }
@@ -53,47 +51,23 @@ class Ant {
 
         const angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
         const angleToMinPheromone= Math.atan2(minPheromoneY - this.y, minPheromoneX - this.x);
-        if (!this.foundFood) {
-            if (angleToMaxPheromone - this.direction > followAngle) {
-                this.direction += followAngle;
-            } else if (angleToMaxPheromone - this.direction < -followAngle) {
-                this.direction -= followAngle;
-            } else {
-                this.direction = angleToMaxPheromone;
-            }
+        if (!this.foundFood){
+            this.x += this.speed * Math.cos(angleToMaxPheromone);
+            this.y += this.speed * Math.sin(angleToMaxPheromone);
         }
         else {
-            if (angleToMinPheromone - this.direction > followAngle) {
-                this.direction += followAngle;
-            } else if (angleToMinPheromone - this.direction < -followAngle) {
-                this.direction -= followAngle;
-            } else {
-                this.direction = angleToMinPheromone;
-            }
+            this.x += this.speed * Math.cos(angleToMinPheromone);
+            this.y += this.speed * Math.sin(angleToMinPheromone);
         }
-
-        this.x += this.speed * Math.cos(this.direction);
-        this.y += this.speed * Math.sin(this.direction);
     }
 
     updateAnt(){
-        if (this.time <299){this.time +=1;}
         let prevMove=[this.x,this.y];
 
-        if (Math.abs(this.x - colonyPos.x) < 20 && Math.abs(this.y - colonyPos.y) < 20 && this.foundFood === true){
-            this.direction += Math.PI;
-            this.foundFood = false;
-            this.following = false;
-            this.time = 0;
-        }
-        if (!this.following && !this.foundFood){
-            if ( pheromones[Math.floor(this.x)][Math.floor(this.y)] > 0){
-                this.following = true;
-            }
-        }
-
-        if (!this.following){ this.moveAnt();}
-        else{this.followAnt();}
+        // мувы муравьишки
+        if (this.following){
+            this.followAnt();
+        } else {this.moveAnt();}
 
         // выход за границы или стенка
         if (this.x < 0 || this.x > 750 || this.y < 0 || this.y > 500 || map[Math.floor(this.x)][Math.floor(this.y)] === -1){
@@ -102,21 +76,31 @@ class Ant {
             this.direction += Math.PI;
         }
         // еда
-        if (map[Math.floor(this.x)][Math.floor(this.y)] === -2 && this.foundFood === false){
-            this.foundFood = true;
-            this.following = false;
-            this.direction += Math.PI;
-            this.time = 0;
+        if (map[Math.floor(this.x)][Math.floor(this.y)] === -2){
+            if (this.foundFood === false){
+                this.foundFood = true;
+                this.following = true;
+                this.direction += Math.PI;
+            }
+            this.hot = 1;
+        }
+        // дом
+        if (Math.abs(this.x - colonyPos.x) < 10 && Math.abs(this.y - colonyPos.y) < 10){
+            if (this.foundFood === true){
+                this.direction += Math.PI;
+                this.foundFood = false;
+                this.following = false;
+            }
+            this.hot = 1;
         }
 
         // оставление феромонов
         if (this.foundFood === false){
-            pheromones[Math.floor(this.x)][Math.floor(this.y)] = -400;
-        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)] = 300; }
+            pheromones[Math.floor(this.x)][Math.floor(this.y)] -= 300*this.hot;
+        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)] += 300*this.hot; }
         this.pheromonePath.push({x:Math.floor(this.x),y:Math.floor(this.y)});
-        if (this.pheromonePath.length > 300){
-            this.pheromonePath.shift();
-        }
+        this.hot*=0.98;
+        if (this.hot <0.001){this.following = false;}
     }
 }
 
@@ -124,6 +108,9 @@ function reset(){
     ants = [];
     for (let i = 0;i<750;i++){
         pheromones[i]=[];
+        for (let j = 0; j < 500; j++) {
+            pheromones[i][j] = 0;
+        }
     }
 }
 
@@ -149,9 +136,7 @@ function antAlgorithm(){
             ants[i].updateAnt();
         }
         drawMap(ants);
-        if (ants.length > 0) {
-            requestAnimationFrame(visualize);
-        }
+        requestAnimationFrame(visualize);
     }
     if (ants.length > 0){
         visualize();
