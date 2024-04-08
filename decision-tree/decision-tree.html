@@ -8,6 +8,50 @@
 </head>
 
 <body>
+
+<div id="header">
+    <h1>Code/Websitehog/decision_tree</h1>
+</div>
+
+<div id="graph-block">
+    <div id="canvas"></div>
+
+    <div class="interface">
+        <div class="control">
+            <div class="buttons-container">
+                <div class="upload">
+                    <label for="upload-tree" class="upload-label">
+                        <img src="../source/decision-tree-images/upload.png" alt="">
+                    </label>
+                    <input type="file" id="upload-tree" class="upload-input">
+                </div>
+            </div>
+
+            <div class="sliders-container">
+                <div id="speed">
+                    <label for="slider-speed"></label><input class="slider" id="slider-speed" type="range" value="50" min="0" max="100">
+                    <p>speed: <span id="speed-value">50</span>%</p>
+                </div>
+
+                <div id="population-size">
+                    <label for="slider-population-size"></label><input class="slider" id="slider-population-size" type="range" min="1000" max="5000" value="3000">
+                    <p>population size: <span id="population-size-value">3000</span></p>
+                </div>
+
+                <div id="amount-generation">
+                    <label for="slider-amount-generation"></label><input class="slider" id="slider-amount-generation" type="range" min="1000" max="5000" value="3000">
+                    <p>amount generation: <span id="amount-generation-value">3000</span></p>
+                </div>
+
+                <div id="mutation">
+                    <label for="slider-mutation"></label><input class="slider" id="slider-mutation" type="range" min="0" max="100" value="50">
+                    <p>mutation: <span id="mutation-value">50</span>%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <nav class="sidebar active load">
     <div class="logo-menu">
         <h2 class="logo">Code/Websitehog</h2>
