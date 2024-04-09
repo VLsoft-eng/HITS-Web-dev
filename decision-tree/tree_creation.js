@@ -131,5 +131,6 @@ export function buildTree(){
     calculateGain(entr);
     console.log("gain", gain);
     calculateGainRatio();
+
     console.log("gainRatio",gainRatio);
 }
