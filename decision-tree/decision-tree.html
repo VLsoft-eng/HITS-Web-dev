@@ -21,31 +21,17 @@
             <div class="buttons-container">
                 <div class="upload">
                     <label for="upload-tree" class="upload-label">
-                        <img src="../source/decision-tree-images/upload.png" alt="">
+                        <img src="../source/decision_tree_icons/upload.png" alt="">
                     </label>
-                    <input type="file" id="upload-tree" class="upload-input">
+                    <input type="file" id="upload-tree" class="upload-input" accept=".csv">
                 </div>
+                <button id="build-tree"><img id="build-tree-img" src="../source/decision_tree_icons/build_tree.png" alt=""></button>
             </div>
 
             <div class="sliders-container">
                 <div id="speed">
                     <label for="slider-speed"></label><input class="slider" id="slider-speed" type="range" value="50" min="0" max="100">
                     <p>speed: <span id="speed-value">50</span>%</p>
-                </div>
-
-                <div id="population-size">
-                    <label for="slider-population-size"></label><input class="slider" id="slider-population-size" type="range" min="1000" max="5000" value="3000">
-                    <p>population size: <span id="population-size-value">3000</span></p>
-                </div>
-
-                <div id="amount-generation">
-                    <label for="slider-amount-generation"></label><input class="slider" id="slider-amount-generation" type="range" min="1000" max="5000" value="3000">
-                    <p>amount generation: <span id="amount-generation-value">3000</span></p>
-                </div>
-
-                <div id="mutation">
-                    <label for="slider-mutation"></label><input class="slider" id="slider-mutation" type="range" min="0" max="100" value="50">
-                    <p>mutation: <span id="mutation-value">50</span>%</p>
                 </div>
             </div>
         </div>
@@ -117,6 +103,8 @@
     </ul>
 </nav>
 
-<script src="/UI/navbar/navbar_script.js"></script>
+<script type="module" src="settings.js"></script>
+<script type="module" src="tree_data.js"></script>
+<script type="module" src="/UI/navbar/navbar_script.js"></script>
 </body>
 </html>
