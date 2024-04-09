@@ -1,5 +1,5 @@
 import {attributes, classMatrix} from './settings.js'
-import {root} from './tree_data.js'
+//import {root} from './tree_data.js'
 
 let gainRatio = [];
 let gain = [];
@@ -128,9 +128,10 @@ export function buildTree(){
     calculateSplitInfo();
     console.log("entr",entr);
     console.log("splitInfo",splitInfo);
+
     calculateGain(entr);
     console.log("gain", gain);
-    calculateGainRatio();
 
+    calculateGainRatio();
     console.log("gainRatio",gainRatio);
 }

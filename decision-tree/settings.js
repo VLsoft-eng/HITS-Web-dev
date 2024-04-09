@@ -19,6 +19,7 @@ input.addEventListener('change', function() {
             classMatrix.push(row);
         }
     };
+
     reader.readAsText(file);
 });
 
