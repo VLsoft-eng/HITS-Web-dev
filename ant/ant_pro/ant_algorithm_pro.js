@@ -1,7 +1,7 @@
 import{slider,drawMap,antCount,colonyPos,ctx} from "./field.js";
 
 class Ant {
-    constructor(x, y) {
+    constructor(x, y, nation) {
         this.x = x;
         this.y = y;
         this.direction = Math.random() * 2 * Math.PI;
@@ -10,6 +10,8 @@ class Ant {
         this.following = false;
         this.pheromonePath = [];
         this.hot = 1;
+        this.timeWithout = 0;
+        this.nation = nation;
     }
 
     moveAnt() {
@@ -19,7 +21,7 @@ class Ant {
     }
 
     followAnt() {
-        const searchRadius = 30;
+        const searchRadius = 60;
 
         let maxPheromone = -Infinity;
         let minPheromone = +Infinity;
@@ -83,24 +85,28 @@ class Ant {
                 this.direction += Math.PI;
             }
             this.hot = 1;
+            this.timeWithout = 0;
         }
         // дом
-        if (Math.abs(this.x - colonyPos.x) < 10 && Math.abs(this.y - colonyPos.y) < 10){
+        if (this.nation === 0 && Math.abs(this.x - colonyPos[0].x) < 10 && Math.abs(this.y - colonyPos[0].y) < 10 ||
+            this.nation === 1 && Math.abs(this.x - colonyPos[1].x) < 10 && Math.abs(this.y - colonyPos[1].y) < 10){
             if (this.foundFood === true){
                 this.direction += Math.PI;
                 this.foundFood = false;
                 this.following = false;
             }
             this.hot = 1;
+            this.timeWithout = 0;
         }
 
         // оставление феромонов
         if (this.foundFood === false){
-            pheromones[Math.floor(this.x)][Math.floor(this.y)] -= 300*this.hot;
-        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)] += 300*this.hot; }
+            pheromones[Math.floor(this.x)][Math.floor(this.y)] -= 400*this.hot;
+        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)] += 400*this.hot; }
         this.pheromonePath.push({x:Math.floor(this.x),y:Math.floor(this.y)});
-        this.hot*=0.98;
-        if (this.hot <0.001){this.following = false;}
+        this.hot*=0.95;
+        this.timeWithout ++;
+        if (this.hot <0.0000001){this.following = false;}
     }
 }
 
@@ -126,17 +132,26 @@ function mapInit(){
 
 function antAlgorithm(){
     reset();
-    if (colonyPos.x === null) {alert('Поставьте колонию'); return;}
+    if (colonyPos.length === 0) {alert('Поставьте колонию'); return;}
     // создание муравьев
-    for (let i = 0;i<antCount.value;i++){
-        ants.push(new Ant(colonyPos.x,colonyPos.y));
+    for (let i = 0;i <colonyPos.length;i++) {
+        for (let j = 0; j < antCount.value; j++) {
+            ants.push(new Ant(colonyPos[i].x, colonyPos[i].y,i));
+        }
     }
     function visualize(){
+        if (ants.length === 0){
+            alert('ВСЕ МУРАВЬИ ПОГИБЛИ :DDD');
+            return;
+        }
         for (let i = 0;i<ants.length;i++){
             ants[i].updateAnt();
+            if (ants[i].timeWithout > 2000){
+                ants.splice(i,1);
+            }
         }
         drawMap(ants);
-        requestAnimationFrame(visualize);
+        setTimeout(visualize,100-slider.value);
     }
     if (ants.length > 0){
         visualize();

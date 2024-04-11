@@ -16,10 +16,11 @@ function endDrawing(){
 function draw(e){
     if (isDrawing) {
         let x = e.offsetX, y = e.offsetY;
-        if (drawingColony && !colonyPos.x) {
-            drawColony(x, y);
-            colonyPos.x = x;
-            colonyPos.y = y;
+        if (drawingColony && colonyPos.length < 2) {
+            if (colonyPos.length === 0 || colonyPos.length === 1 && (Math.abs(x-colonyPos[0].x) > 100 || Math.abs(y-colonyPos[0].y) > 100)) {
+                colonyPos.push({x: x, y: y, color: colonyPos.length});
+                drawColony();
+            }
         }
 
         if (drawingWalls) {
@@ -44,12 +45,16 @@ function draw(e){
     }
 }
 
-function drawColony(x,y){
-    ctx.beginPath();
-    ctx.arc(x, y, 15, 0, Math.PI * 2);
-    ctx.fillStyle = "red";
-    ctx.fill();
-    ctx.closePath();
+function drawColony(){
+    for (let i = 0; i < colonyPos.length;i++) {
+        ctx.beginPath();
+        ctx.arc(colonyPos[i].x, colonyPos[i].y, 15, 0, Math.PI * 2);
+        if (i === 0) {
+            ctx.fillStyle = "red";
+        } else {ctx.fillStyle = 'white';}
+        ctx.fill();
+        ctx.closePath();
+    }
 }
 function drawWall(x,y){
     ctx.beginPath();
@@ -102,13 +107,17 @@ function drawMap(ants) {
         for (let j = 0; j < ants[i].pheromonePath.length; j++) {
             const x = ants[i].pheromonePath[j].x;
             const y = ants[i].pheromonePath[j].y;
-            if (pheromones[x][y] < -0.001) {
-                ctx.fillStyle = 'mediumpurple';
+            if (pheromones[x][y] < -0.001 ) {
+                if (ants[i].nation === 0) {
+                    ctx.fillStyle = 'mediumpurple';
+                } else {ctx.fillStyle = 'lightgray';}
                 ctx.fillRect(x, y, 1, 1);
                 pheromones[x][y] *= 0.99;
             }
             else if (pheromones[x][y] > 0.001){
-                ctx.fillStyle = 'lawngreen';
+                if (ants[i].nation === 0) {
+                    ctx.fillStyle = 'lawngreen';
+                } else {ctx.fillStyle = 'red';}
                 ctx.fillRect(x, y, 1, 1);
                 pheromones[x][y] *= 0.99;
             }
@@ -117,10 +126,10 @@ function drawMap(ants) {
             }
 
         }
-        ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 40, 40);
+        ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
     }
 
-    if (colonyPos.x) drawColony(colonyPos.x, colonyPos.y);
+    if (colonyPos.length > 0){ drawColony();}
     for (let i = 0; i < food.length; i++) drawFood(food[i].x, food[i].y);
     for (let i = 0; i < walls.length; i++) drawWall(walls[i].x, walls[i].y);
 }
@@ -128,7 +137,7 @@ function drawMap(ants) {
 
 function clear(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    colonyPos = { x: null, y: null };
+    colonyPos = [];
     reset();
     walls=[];
     food=[];
@@ -153,7 +162,7 @@ slider.oninput = function() {
 }
 
 
-let colonyPos = { x: null, y: null };
+let colonyPos =[];
 let walls = [];
 let food = [];
 
