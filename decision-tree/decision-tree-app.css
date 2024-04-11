@@ -3,7 +3,7 @@ body {
     background-color: #111111;
 }
 
-#canvas{
+#tree-container{
     margin-left: 1.5px;
     border: 2px solid white;
     width: 750px;
@@ -27,7 +27,7 @@ p{
     color: azure;
 }
 
-#graph-block{
+#tree-block{
     height: 500px;
     width: 955px;
     display: flex;
@@ -80,8 +80,8 @@ p{
 .upload-input {
     position: absolute;
     opacity: 0;
-    border-radius: 10px;
-    margin: 10px;
+    width: 0;
+    right: 0;
 }
 
 button{

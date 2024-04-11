@@ -1,14 +1,14 @@
-//import {attributes, classMatrix} from './settings.js'
-export let root;
 export class TreeNode {
-    constructor(value) {
-        this.value = value;
+    constructor(attribute, valClass) {
+        this.attribute = attribute;
+        this.class = valClass;
         this.children = [];
     }
 
     addChild(childNode) {
         this.children.push(childNode);
     }
-
 }
+
+
 

@@ -8,13 +8,14 @@
 </head>
 
 <body>
-
 <div id="header">
     <h1>Code/Websitehog/decision_tree</h1>
 </div>
 
-<div id="graph-block">
-    <div id="canvas"></div>
+<div id="tree-block">
+    <div id="tree-container">
+        <ul id="tree"></ul>
+    </div>
 
     <div class="interface">
         <div class="control">
@@ -41,63 +42,63 @@
 <nav class="sidebar active load">
     <div class="logo-menu">
         <h2 class="logo">Code/Websitehog</h2>
-        <img class="toggle-btn" src="/source/navbar_icons/toggleBtn_icon.png">
+        <img class="toggle-btn" src="/source/navbar_icons/toggleBtn_icon.png" alt="">
     </div>
     <ul class="list">
         <li class="list-item">
             <a href="../../HITS-Web-dev/home/home.html">
-                <img class="toggle-btn" src="/source/navbar_icons/home_icon.png">
+                <img class="toggle-btn" src="/source/navbar_icons/home_icon.png" alt="">
                 <span class="link-name" style="--i:1">
-                        Home
-                    </span>
+                    Home
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/a-star/a-star.html">
-                <img src="/source/navbar_icons/a-star_icon.png">
+                <img src="/source/navbar_icons/a-star_icon.png" alt="">
                 <span class="link-name" style="--i:2">
-                        A-Star
-                    </span>
+                    A-Star
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/clustering/clustering.html">
-                <img src="/source/navbar_icons/clustering_icon.png">
+                <img src="/source/navbar_icons/clustering_icon.png" alt="">
                 <span class="link-name" style="--i:3">
-                        Clustering
-                    </span>
+                    Clustering
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/genetic/genetic.html">
-                <img src="/source/navbar_icons/genetic_icon.png">
+                <img src="/source/navbar_icons/genetic_icon.png" alt="">
                 <span class="link-name" style="--i:4">
-                        Genetic algorithm
-                    </span>
+                    Genetic algorithm
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/ant/ant.html">
-                <img src="/source/navbar_icons/ant_icon.png">
+                <img src="/source/navbar_icons/ant_icon.png" alt="">
                 <span class="link-name" style="--i:5">
-                        Ant algorithm
-                    </span>
+                    Ant algorithm
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/decision-tree/decision-tree.html">
-                <img src="/source/navbar_icons/tree_icon.png">
+                <img src="/source/navbar_icons/tree_icon.png" alt="">
                 <span class="link-name" style="--i:6">
-                        Decision tree
-                    </span>
+                    Decision tree
+                </span>
             </a>
         </li>
         <li class="list-item">
             <a href="../../HITS-Web-dev/neural/neural.html">
-                <img src="/source/navbar_icons/neural_icon.png">
+                <img src="/source/navbar_icons/neural_icon.png" alt="">
                 <span class="link-name" style="--i:7">
-                        Neural link
-                    </span>
+                    Neural link
+                </span>
             </a>
         </li>
     </ul>
@@ -105,6 +106,8 @@
 
 <script type="module" src="settings.js"></script>
 <script type="module" src="tree_data.js"></script>
+<script type="module" src="tree_creation.js"></script>
+<script type="module" src="calculate_gain_ratio.js"></script>
 <script type="module" src="/UI/navbar/navbar_script.js"></script>
 </body>
 </html>

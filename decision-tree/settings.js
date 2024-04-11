@@ -1,17 +1,22 @@
 import {buildTree} from './tree_creation.js'
 
-export let attributes = [];
-export let classMatrix = [];
+export let attributes;
+export let classMatrix;
+
+function reset(){
+    classMatrix = [];
+    attributes = [];
+}
 
 const input = document.getElementById('upload-tree');
 input.addEventListener('change', function() {
+    reset();
     const file = this.files[0];
     const reader = new FileReader();
 
     reader.onload = function(e) {
         const content = e.target.result;
-        const lines = content.split('\n'); // Разбиваем содержимое на строки
-        // Выводим содержимое файла по строкам
+        const lines = content.split('\n');
         lines[0].split(',').forEach(attribute => attributes.push(attribute.trim()));
         for (let i = 1; i < lines.length - 1; i++){
             let row = [];
@@ -19,7 +24,6 @@ input.addEventListener('change', function() {
             classMatrix.push(row);
         }
     };
-
     reader.readAsText(file);
 });
 
