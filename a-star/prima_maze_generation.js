@@ -1,156 +1,141 @@
-import {lock,unlock} from './maze.js';
-
-
-let slider = document.getElementById("range");
-let output = document.getElementById("value");
-output.innerHTML = slider.value;
-
-slider.oninput = function() {
-    output.innerHTML = this.value;
-}
+import {lock,unlock,clearMaze,slider,size,} from './maze.js';
 class Point {
-    constructor(row, column) {
+    constructor(row, column, point) {
         this.row = row;
         this.column = column;
         this.clear = false;
+        this.parent = point;
+    }
+    opposite() {
+        let dx = this.row - this.parent.row;
+        let dy = this.column - this.parent.column;
+
+        let oppositeX = this.row + dx;
+        let oppositeY = this.column + dy;
+
+        return new Point(oppositeX, oppositeY, this);
     }
 
-    makeClear() {
-        cells[this.row * N + this.column].classList.remove('wall');
-        this.clear = true;
-    }
-
-    isClear() {
-        return this.clear;
-    }
-
-    makeWall() {
-        cells[this.row * N + this.column].classList.add('wall');
-        this.clear = false;
-    }
     isWall() {
         return !this.clear;
     }
+
+    makeClear() {
+        cells[this.row * (mazeSize - add) + this.column].classList.remove('wall');
+        this.clear = true;
+    }
+
+    makeWall() {
+        cells[this.row * (mazeSize - add) + this.column].classList.add('wall');
+        this.clear = false;
+    }
+}
+
+function isSafe(row,column){
+    return (row>=0 && row < mazeSize && column >=0 && column < mazeSize);
 }
 
 function random(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
-function mazeInit(N) {
-    const maze = [];
-    for (let i = 0; i < N; i++) {
-        maze[i] = [];
-        for (let j = 0; j < N; j++) {
-            maze[i][j] = new Point(i, j);
-        }
-    }
-    return maze;
-}
-
 function prima() {
-    // очистка поля
-    cells.forEach(cell => {
-        cell.classList.remove('spotted');
-        cell.classList.remove('visited');
-        cell.classList.remove('path');
-        cell.classList.remove('start');
-        cell.classList.remove('end');
-    });
+    cells = document.querySelectorAll('.cell');
+    mazeSize = size.value;
+    add = 0;
+    if (mazeSize % 2 === 0){mazeSize ++; add = 1;}
 
-    const maze = mazeInit(N);
-    for (let i = 0; i < N; i++) {
-        for (let j = 0; j < N; j++) {
+    // генерация поля
+    clearMaze();
+    let maze = [];
+    for (let i = 0; i < mazeSize - add; i++) {
+        maze[i] = [];
+
+        for (let j = 0; j < mazeSize - add; j++) {
+            maze[i][j] = new Point(i, j, null);
             maze[i][j].makeWall(i, j);
         }
     }
 
-    let currentPoint = new Point(0, 0);
+    let currentPoint = new Point(0, 0, null);
+    cells[currentPoint.row * (mazeSize - add) + currentPoint.column].classList.add('start');
     maze[currentPoint.row][currentPoint.column].makeClear();
-    cells[currentPoint.row * N + currentPoint.column].classList.add('start');
     lock();
 
     let queue = [];
-    // добавляем наследников стартовой точки в очередь
-    if (currentPoint.row - 2 >= 0) {
-        queue.push(new Point(currentPoint.row - 2, currentPoint.column));
-    }
-    if (currentPoint.row + 2 < N) {
-        queue.push(new Point(currentPoint.row + 2, currentPoint.column));
-    }
-    if (currentPoint.column - 2 >= 0) {
-        queue.push(new Point(currentPoint.row, currentPoint.column - 2));
-    }
-    if (currentPoint.column + 2 < N) {
-        queue.push(new Point(currentPoint.row, currentPoint.column + 2));
+    let visited = [];
+    for (let i = 0;i<mazeSize;i++){
+        visited[i] = [];
+        for (let j = 0;j<mazeSize;j++){
+            visited[i][j] = 0;
+        }
     }
 
+    // добавляем наследников стартовой точки в очередь
+    for (let x = -1; x <= 1; x++){
+        for (let y = -1; y <= 1; y++){
+            if (x === 0 && y === 0 || x !== 0 && y !== 0){
+                continue;
+            }
+            if (isSafe(currentPoint.row + x,currentPoint.column + y)){
+                if (maze[currentPoint.row + x][currentPoint.column + y].isWall()) {
+                    queue.push(new Point(currentPoint.row + x, currentPoint.column + y, currentPoint));
+                }
+            }
+        }
+    }
     function visualizePrima() {
         if (queue.length === 0 ){
-            cells[currentPoint.row * N + currentPoint.column].classList.add('end');
+            cells[currentPoint.row * (mazeSize - add) + currentPoint.column].classList.add('end');
+            maze[currentPoint.row][currentPoint.column].makeClear();
             unlock();
             return;
         }
         // обработка наследников
         if (queue.length > 0) {
             let index = random(0, queue.length)
-            currentPoint.row = queue[index].row;
-            currentPoint.column = queue[index].column;
-            maze[currentPoint.row][currentPoint.column].makeClear();
+            currentPoint = queue[index];
+            let op = currentPoint.opposite();
+            visited[queue[index].row][queue[index].column]=1;
             queue.splice(index, 1);
 
-            let directions = ['up', 'down', 'left', 'right'];
-            while (directions.length > 0) {
-                let directionIndex = random(0,directions.length);
-                let direction = directions[directionIndex];
-                switch (direction) {
-                    case 'up':
-                        if (currentPoint.column - 2 >= 0 && maze[currentPoint.row][currentPoint.column - 2].isClear()) {
-                            maze[currentPoint.row][currentPoint.column - 1].makeClear();
-                            directions = [];
-                        }
-                        break;
-                    case 'down':
-                        if (currentPoint.column + 2 < N && maze[currentPoint.row][currentPoint.column + 2].isClear()) {
-                            maze[currentPoint.row][currentPoint.column + 1].makeClear();
-                            directions = [];
-                        }
-                        break;
-                    case 'left':
-                        if (currentPoint.row - 2 >= 0 && maze[currentPoint.row - 2][currentPoint.column].isClear()) {
-                            maze[currentPoint.row - 1][currentPoint.column].makeClear();
-                            directions = [];
-                        }
-                        break;
-                    case 'right':
-                        if (currentPoint.row + 2 < N && maze[currentPoint.row + 2][currentPoint.column].isClear()) {
-                            maze[currentPoint.row + 1][currentPoint.column].makeClear();
-                            directions = [];
-                        }
-                        break;
+            if (maze[currentPoint.row][currentPoint.column].isWall() && isSafe(op.row,op.column)){
+                if (add === 0 || add === 1 && op.row < mazeSize - 1 && op.column < mazeSize -1) {
+                    if (maze[op.row][op.column].isWall()) {
+                        maze[currentPoint.row][currentPoint.column].makeClear();
+                        maze[op.row][op.column].makeClear();
+                    }
                 }
-                directions.splice(directionIndex, 1);
+                else {
+                    maze[currentPoint.row][currentPoint.column].makeClear();
+                }
             }
-            if (currentPoint.column - 2 >= 0 && maze[currentPoint.row][currentPoint.column - 2].isWall()) {
-                queue.push(new Point(currentPoint.row, currentPoint.column - 2));
+
+            // добавляем наследников противоположной точки
+            for (let x = -1; x <= 1; x++){
+                for (let y = -1; y <= 1; y++){
+                    if (x === 0 && y === 0 || x !== 0 && y !== 0){
+                        continue;
+                    }
+                    if (isSafe(op.row + x,op.column + y)){
+                        if (add === 0 || add === 1 && op.row + x < mazeSize - 1 && op.column + y < mazeSize - 1) {
+                            if (maze[op.row + x][op.column + y].isWall() && visited[op.row + x][op.column + y] === 0) {
+                                queue.push(new Point(op.row + x, op.column + y, op));
+                            }
+                        }
+                    }
+                }
             }
-            if (currentPoint.column + 2 < N && maze[currentPoint.row][currentPoint.column + 2].isWall()) {
-                queue.push(new Point(currentPoint.row, currentPoint.column + 2));
-            }
-            if (currentPoint.row - 2 >= 0 && maze[currentPoint.row - 2][currentPoint.column].isWall()) {
-                queue.push(new Point(currentPoint.row - 2, currentPoint.column));
-            }
-            if (currentPoint.row + 2 < N && maze[currentPoint.row + 2][currentPoint.column].isWall()) {
-                queue.push(new Point(currentPoint.row + 2, currentPoint.column));
-            }
+
         }
         setTimeout(visualizePrima, 100 - slider.value);
     }
     visualizePrima();
 }
 
-const cells = document.querySelectorAll('.cell');
-const N = 21;
-
-document.getElementById('auto').addEventListener('click', prima);
-
+let add = 0;
+let mazeSize = size.value;
+let cells = document.querySelectorAll('.cell');
+document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById('auto').addEventListener('click', prima);
+});
