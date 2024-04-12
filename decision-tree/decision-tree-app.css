@@ -34,6 +34,23 @@ p{
     margin-left: 50vh;
 }
 
+.tree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.node {
+    margin: 10px;
+    text-align: center;
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+    background: forestgreen;
+    background-size: auto;
+    padding: 10px;
+}
+
 .interface{
     margin-left: 5px;
 }
@@ -51,21 +68,12 @@ p{
     display: flex;
     align-items: center;
     flex-direction: column;
-    margin-top: 22px;
 }
-
 
 .upload {
     position: relative;
     border-radius: 10px;
     margin: 10px;
-}
-
-.upload:hover{
-    box-shadow: 0 0 5px #727272,
-    0 0 5px #b7b7b7,
-    0 0 10px #cecece,
-    0 0 15px #ffffff;
 }
 
 .upload-label {
@@ -77,17 +85,35 @@ p{
     border-radius: 10px;
 }
 
-.upload-input {
-    position: absolute;
-    opacity: 0;
-    width: 0;
-    right: 0;
+label {
+    display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    background-color: #111111;
+    border-radius: 10px;
+    margin: 10px;
 }
+
+label:hover{
+    box-shadow: 0 0 5px #727272,
+    0 0 5px #b7b7b7,
+    0 0 10px #cecece,
+    0 0 15px #ffffff;
+}
+
+label img{
+    width: 50px;
+    height: 50px;
+}
+
+.upload-decision{
+    // что-нибудь придумать надо
+}
+
 
 button{
     display: flex;
     cursor: pointer;
-    flex-direction: column;
     background-color: #111111;
     border-radius: 10px;
     margin: 10px;
@@ -114,7 +140,6 @@ button img{
 
 .sliders-container > div {
     text-align: center;
-    margin-top: 20px;
 }
 
 .slider {

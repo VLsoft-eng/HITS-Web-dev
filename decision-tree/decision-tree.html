@@ -9,26 +9,33 @@
 
 <body>
 <div id="header">
-    <h1>Code/Websitehog/decision_tree</h1>
+    <h1>Code/Websitehog/decision_tree_algorithm</h1>
 </div>
 
 <div id="tree-block">
     <div id="tree-container">
-        <ul id="tree"></ul>
+        <div id="tree"></div>
     </div>
 
     <div class="interface">
         <div class="control">
-            <div class="buttons-container">
-                <div class="upload">
+            <div class="upload">
+                <div class="buttons-container">
                     <label for="upload-tree" class="upload-label">
-                        <img src="../source/decision_tree_icons/upload.png" alt="">
+                        <img id="upload-tree-img" src="../source/decision_tree_icons/upload.png" alt="">
+                        <input type="file" id="upload-tree" class="upload-input" accept=".csv">
                     </label>
-                    <input type="file" id="upload-tree" class="upload-input" accept=".csv">
+                    <button id="build-tree">
+                        <img id="build-tree-img" src="../source/decision_tree_icons/build_tree.png" alt="">
+                    </button>
+                    <button id="start">
+                        <img id="start-img" src="../source/decision_tree_icons/start.png" alt="">
+                    </button>
                 </div>
-                <button id="build-tree"><img id="build-tree-img" src="../source/decision_tree_icons/build_tree.png" alt=""></button>
+                <label class="upload-decision">
+                    <input type="text" id="path">
+                </label>
             </div>
-
             <div class="sliders-container">
                 <div id="speed">
                     <label for="slider-speed"></label><input class="slider" id="slider-speed" type="range" value="50" min="0" max="100">

@@ -1,7 +1,7 @@
 import {attributes, classMatrix} from "./settings.js";
 
-export let uniqueClasses = [];
-let gainRatio = [];
+export let uniqueClasses;
+let gainRatio;
 
 function calculateSum(columnIndex, attributeValue){
     let outcomes = [];
@@ -31,6 +31,7 @@ function calculateSum(columnIndex, attributeValue){
         let P = (outcomes[i].amount / count)
         entropySum -= P * Math.log2(P);
     }
+
     return entropySum;
 }
 
@@ -92,9 +93,11 @@ function sortGainRatio(){
 }
 
 export function sortAttributes() {
+    uniqueClasses = [];
     findUniqueClasses();
     let entropy = [];
     let splitInfo = [];
+    gainRatio = [];
 
     for (let i = 0; i < attributes.length; i++) {
         entropy.push(calculateEntropy(i));
@@ -107,10 +110,10 @@ export function sortAttributes() {
 
     sortGainRatio();
 
-    console.log("entropy", entropy);
-    console.log("splitInfo", splitInfo);
-    console.log("gainRatio", gainRatio);
-    console.log("attributes", attributes);
-    console.log("classMatrix", classMatrix);
-    console.log("uniqueClasses", uniqueClasses);
+    // console.log("entropy", entropy);
+    // console.log("splitInfo", splitInfo);
+    // console.log("gainRatio", gainRatio);
+    // console.log("attributes", attributes);
+     console.log("classMatrix", classMatrix);
+     console.log("uniqueClasses", uniqueClasses);
 }
