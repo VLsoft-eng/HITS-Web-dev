@@ -13,13 +13,12 @@ class Ant {
         this.y = y;
         this.direction = Math.random() * 2 * Math.PI;
         this.speed = Math.random() * 2 + 1;
-        this.foundFood = false;
+        this.goHome = false;
         this.following = false;
         this.pheromonePath = [];
         this.hot = 1;
         this.timeWithout = 0;
         this.nation = nation;
-        this.strength = 0;
     }
 
     moveAnt() {
@@ -29,7 +28,7 @@ class Ant {
     }
 
     followAnt() {
-        const searchRadius = 30;
+        const searchRadius = 25;
 
         let maxPheromone = -Infinity;
         let maxPheromoneX = this.x;
@@ -46,16 +45,16 @@ class Ant {
                 const newY = Math.floor(this.y) + dy;
 
                 if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
-                    if (this.foundFood) {
+                    if (this.goHome) {
                         const currentPheromone = pheromones[newX][newY].home;
-                        if (currentPheromone > maxPheromone && pheromones[newX][newY].family === this.nation) {
+                        if (currentPheromone > maxPheromone && currentPheromone !== 0 && pheromones[newX][newY].family === this.nation) {
                             maxPheromone = currentPheromone;
                             maxPheromoneX = newX;
                             maxPheromoneY = newY;
                         }
                     } else {
                         const currentPheromone = pheromones[newX][newY].food;
-                        if (currentPheromone > maxPheromone && pheromones[newX][newY].family === this.nation) {
+                        if (currentPheromone > maxPheromone && currentPheromone !== 0 && pheromones[newX][newY].family === this.nation) {
                             maxPheromone = currentPheromone;
                             maxPheromoneX = newX;
                             maxPheromoneY = newY;
@@ -66,7 +65,6 @@ class Ant {
         }
 
         if (maxPheromone === -Infinity) {
-            this.following = false;
             this.moveAnt();
         } else {
             const angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
@@ -75,6 +73,27 @@ class Ant {
         }
     }
 
+    sniffPheromone(){
+        const searchRadius = 30;
+        for (let dx = -searchRadius; dx <= searchRadius; dx++) {
+            for (let dy = -searchRadius; dy <= searchRadius; dy++) {
+                const newX = Math.floor(this.x) + dx;
+                const newY = Math.floor(this.y) + dy;
+                if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
+                    if (this.goHome) {
+                        if (pheromones[newX][newY].home > 0 && pheromones[newX][newY].family === this.nation) {
+                            return true;
+                        }
+                    } else {
+                        if (pheromones[newX][newY].food > 0 && pheromones[newX][newY].family === this.nation) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
     updateAnt(){
         let prevMove=[this.x,this.y];
@@ -82,46 +101,74 @@ class Ant {
         // мувы муравьишки
         if (this.following){
             this.followAnt();
-        } else {this.moveAnt();}
+        }
+        else if (this.sniffPheromone()){
+            this.following =true;
+        }
+        else {
+            this.moveAnt()
+        }
+        if (this.timeWithout > 700){
+            this.hot = 0;
+            this.goHome = true;
+        }
 
         // выход за границы или стенка
-        if (this.x < 0 || this.x > 750 || this.y < 0 || this.y > 500 || map[Math.floor(this.x)][Math.floor(this.y)] === -1){
+        if (this.x < 1 || this.x > 749 || this.y < 1 || this.y > 499 || map[Math.floor(this.x)][Math.floor(this.y)] === -1){
             this.x = prevMove[0];
             this.y = prevMove[1];
             this.direction += Math.PI;
+            this.following = false;
         }
         // еда
         if (map[Math.floor(this.x)][Math.floor(this.y)] === -2){
-            if (this.foundFood === false){
-                this.foundFood = true;
-                this.following = true;
+            if (this.goHome === false){
+                this.goHome = true;
+                if (!this.sniffPheromone()){
+                    this.following = false;
+                }
                 this.direction += Math.PI;
             }
             this.hot = 1;
             this.timeWithout = 0;
         }
         // дом
-        if (this.nation === 0 && Math.abs(this.x - colonyPos[0].x) < 10 && Math.abs(this.y - colonyPos[0].y) < 10 ||
-            this.nation === 1 && Math.abs(this.x - colonyPos[1].x) < 10 && Math.abs(this.y - colonyPos[1].y) < 10){
-            if (this.foundFood === true){
-                this.direction += Math.PI;
-                this.foundFood = false;
+        if (this.nation === 0 && Math.abs(this.x - colonyPos[0].x) < 5 && Math.abs(this.y - colonyPos[0].y) < 5 ||
+            this.nation === 1 && Math.abs(this.x - colonyPos[1].x) < 5 && Math.abs(this.y - colonyPos[1].y) < 5){
+            if (this.goHome === true){
+                this.goHome = false;
+            }
+            if (!this.sniffPheromone()){
                 this.following = false;
-                this.strength++;
             }
             this.hot = 1;
             this.timeWithout = 0;
         }
 
         // оставление феромонов
-        if (this.foundFood === false){
-            pheromones[Math.floor(this.x)][Math.floor(this.y)].home += 400*this.hot;
-        } else {pheromones[Math.floor(this.x)][Math.floor(this.y)].food += 400*this.hot; }
-        pheromones[Math.floor(this.x)][Math.floor(this.y)].family = this.nation;
-        this.pheromonePath.push({x:Math.floor(this.x),y:Math.floor(this.y)});
-        this.hot*=0.95;
+        if(this.timeWithout%8===0) {
+            if (this.goHome === false) {
+                pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].home = 400 * this.hot;
+                pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].home = 400 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].home = 400 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].home = 400 * this.hot;
+            } else {
+                pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].food = 400 * this.hot;
+                pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].food = 400 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].food = 400 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].food = 400 * this.hot;
+            }
+            pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].family = this.nation;
+            pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].family = this.nation;
+            pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].family = this.nation;
+            pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].family = this.nation;
+            this.pheromonePath.push({x: Math.floor(this.x + 1), y: Math.floor(this.y)});
+            this.pheromonePath.push({x: Math.floor(this.x - 1), y: Math.floor(this.y)});
+            this.pheromonePath.push({x: Math.floor(this.x), y: Math.floor(this.y + 1)});
+            this.pheromonePath.push({x: Math.floor(this.x), y: Math.floor(this.y - 1)});
+        }
+        this.hot*=0.98;
         this.timeWithout ++;
-        if (this.hot <0.0000001){this.following = false;}
     }
 }
 
@@ -136,27 +183,32 @@ function reset(){
 }
 
 function mapInit(){
+    ants = [];
     for (let i = 0;i<750;i++){
-        map[i]=[];
         pheromones[i]=[];
+        map[i]=[];
         for (let j = 0; j < 500; j++) {
             pheromones[i][j] = new Pheromone();
         }
     }
 }
-
 function antAlgorithm(){
-    reset();
+    if (isStarted){
+        reset();
+        isStarted = false;
+        return;
+    }
+    isStarted = true;
     if (colonyPos.length === 0) {alert('Поставьте колонию'); return;}
     // создание муравьев
     for (let i = 0;i <colonyPos.length;i++) {
-        for (let j = 0; j < antCount.value; j++) {
+        for (let j = 0; j < antCount.value/colonyPos.length; j++) {
             ants.push(new Ant(colonyPos[i].x, colonyPos[i].y,i));
         }
     }
     function visualize(){
         if (ants.length === 0){
-            alert('ВСЕ МУРАВЬИ ПОГИБЛИ :DDD');
+            console.log('stopped');
             return;
         }
         for (let i = 0;i<ants.length;i++){
@@ -168,13 +220,12 @@ function antAlgorithm(){
         drawMap(ants);
         setTimeout(visualize,100-slider.value);
     }
-    if (ants.length > 0){
-        visualize();
-    }
+    visualize();
 }
 let map = [];
 let pheromones = [];
 let ants = [];
+let isStarted = false;
 
 export {map,pheromones,reset,ants};
 document.addEventListener('DOMContentLoaded', () => {

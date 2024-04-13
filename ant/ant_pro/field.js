@@ -107,25 +107,24 @@ function drawMap(ants) {
         for (let j = 0; j < ants[i].pheromonePath.length; j++) {
             const x = ants[i].pheromonePath[j].x;
             const y = ants[i].pheromonePath[j].y;
-            if (pheromones[x][y].home > 0.001 ) {
-                if (ants[i].nation === 0) {
-                    ctx.fillStyle = 'mediumpurple';
-                } else {ctx.fillStyle = 'red';}
-                ctx.fillRect(x, y, 1, 1);
-                pheromones[x][y].home *= 0.99;
-            }
-            else if (pheromones[x][y].food > 0.001){
+            if (pheromones[x][y].food > 0.001){
                 if (ants[i].nation === 0) {
                     ctx.fillStyle = 'lawngreen';
                 } else {ctx.fillStyle = 'lightgray';}
                 ctx.fillRect(x, y, 1, 1);
-                pheromones[x][y].food *= 0.99;
+                pheromones[x][y].food -= 0.05;
+            }
+            else if (pheromones[x][y].home > 0.001 ) {
+                if (ants[i].nation === 0) {
+                    ctx.fillStyle = 'mediumpurple';
+                } else {ctx.fillStyle = 'red';}
+                ctx.fillRect(x, y, 1, 1);
+                pheromones[x][y].home -= 0.05;
             }
             else {
                 ants[i].pheromonePath.splice(j,1);
-                pheromones[x][y].food = 0; pheromones[x][y].home = 0;
+                pheromones[x][y].food = 0; pheromones[x][y].home = 0; pheromones[x][y].family = 0;
             }
-
         }
         if (ants[i].nation === 0) {
             ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
@@ -134,6 +133,9 @@ function drawMap(ants) {
         }
     }
 
+    if (ants.length === 0){
+        alert('Муравьи вымерли :)');
+    }
     if (colonyPos.length > 0){ drawColony();}
     for (let i = 0; i < food.length; i++) drawFood(food[i].x, food[i].y);
     for (let i = 0; i < walls.length; i++) drawWall(walls[i].x, walls[i].y);
