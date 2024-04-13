@@ -107,26 +107,31 @@ function drawMap(ants) {
         for (let j = 0; j < ants[i].pheromonePath.length; j++) {
             const x = ants[i].pheromonePath[j].x;
             const y = ants[i].pheromonePath[j].y;
-            if (pheromones[x][y] < -0.001 ) {
+            if (pheromones[x][y].home > 0.001 ) {
                 if (ants[i].nation === 0) {
                     ctx.fillStyle = 'mediumpurple';
-                } else {ctx.fillStyle = 'lightgray';}
-                ctx.fillRect(x, y, 1, 1);
-                pheromones[x][y] *= 0.99;
-            }
-            else if (pheromones[x][y] > 0.001){
-                if (ants[i].nation === 0) {
-                    ctx.fillStyle = 'lawngreen';
                 } else {ctx.fillStyle = 'red';}
                 ctx.fillRect(x, y, 1, 1);
-                pheromones[x][y] *= 0.99;
+                pheromones[x][y].home *= 0.99;
+            }
+            else if (pheromones[x][y].food > 0.001){
+                if (ants[i].nation === 0) {
+                    ctx.fillStyle = 'lawngreen';
+                } else {ctx.fillStyle = 'lightgray';}
+                ctx.fillRect(x, y, 1, 1);
+                pheromones[x][y].food *= 0.99;
             }
             else {
                 ants[i].pheromonePath.splice(j,1);
+                pheromones[x][y].food = 0; pheromones[x][y].home = 0;
             }
 
         }
-        ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
+        if (ants[i].nation === 0) {
+            ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
+        } else {
+            ctx.drawImage(anotherAntImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
+        }
     }
 
     if (colonyPos.length > 0){ drawColony();}
@@ -171,7 +176,9 @@ let drawingWalls = false;
 let drawingFood = false;
 let isDrawing = false;
 let antImage = new Image();
+let anotherAntImage = new Image ();
 antImage.src = '../../source/ant_algorithm_images/ant.png';
+anotherAntImage.src = '../../source/ant_algorithm_images/anotherAnt.png';
 
 export {slider,antCount,colonyPos,drawMap,ctx};
 document.addEventListener('DOMContentLoaded', () => {
