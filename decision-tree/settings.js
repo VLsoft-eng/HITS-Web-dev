@@ -2,6 +2,7 @@ import {createStructure, createTreeHtml, drawLines, root, ctx} from './tree_crea
 import {treeBypassing} from './tree_bypassing.js'
 import {treeOptimization} from "./tree_optimization.js";
 
+export let isBypassing;
 export let attributes;
 export let copyAttributes;
 export let classMatrix;
@@ -25,6 +26,7 @@ function reset(){
     copyAttributes = [];
     path = [];
     entryField.value = '';
+    isBypassing = false;
     ctx.reset();
     if (root){
         deleteTree(root);
@@ -73,13 +75,19 @@ buildTreeButton.addEventListener('click',function (){
 // Удаление всего
 const deleteTreeButton = document.getElementById('delete-tree');
 deleteTreeButton.addEventListener('click',function (){
-    reset();
+    treeHTML.innerHTML = '';
+    ctx.reset();
+    isBypassing = false;
 });
 
 // Обход по маршруту
 const startBypassingButton = document.getElementById('start-bypassing');
 startBypassingButton.addEventListener('click', function (){
-    if (!root || root.children.length === 0){
+    if (isBypassing) {
+        alert("Дождитесь завершение обхода");
+        return;
+    }
+    if (!root || root.children.length === 0 || treeHTML.innerHTML === ''){
         alert("Сначала постройте дерево");
         return;
     }
@@ -93,14 +101,14 @@ startBypassingButton.addEventListener('click', function (){
         alert("Введите нужное количество решений");
         return;
     }
-    ctx.reset();
     treeHTML.innerHTML = createTreeHtml(root);
-    drawLines(root);
-    if (!treeBypassing(root)){
-        //alert("Введите верно классы");
-        treeHTML.innerHTML = createTreeHtml(root);
-    }
+    isBypassing = true;
+    treeBypassing(root)
 });
+
+export function inverseIsBypassing(){
+    isBypassing = !isBypassing;
+}
 
 // Поле ввода решений
 let inputPath;
@@ -112,10 +120,11 @@ entryField.addEventListener('input', function() {
 // Отпимизация дерева (удаление лишних веток и листьев)
 const treeOptimizationButton = document.getElementById('tree-optimization');
 treeOptimizationButton.addEventListener('click', function () {
-    if (!root || !attributes) {
+    if (!root || !attributes || treeHTML.innerHTML === '') {
         alert("Сначала постройте дерево");
         return;
     }
+    isBypassing = false;
     treeOptimization(root);
     treeHTML.innerHTML = createTreeHtml(root);
     ctx.reset();

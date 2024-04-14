@@ -112,10 +112,10 @@ export function sortAttributes() {
 
     sortGainRatio();
 
-    // console.log("entropy", entropy);
-    // console.log("splitInfo", splitInfo);
-    // console.log("gainRatio", gainRatio);
-    //  console.log("attributes", attributes);
-    //  console.log("classMatrix", classMatrix);
-    //  console.log("uniqueClasses", uniqueClasses);
+    //console.log("entropy", entropy);
+    //console.log("splitInfo", splitInfo);
+    //console.log("gainRatio", gainRatio);
+    //console.log("attributes", attributes);
+    //console.log("classMatrix", classMatrix);
+    //console.log("uniqueClasses", uniqueClasses);
 }

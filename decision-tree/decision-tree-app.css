@@ -6,8 +6,11 @@ body {
 #tree-block{
     height: 500px;
     width: 1355px;
+    position: absolute;
     display: flex;
-    margin-left: 25vh;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 #tree-container{
@@ -69,10 +72,6 @@ p{
     display: flex;
 }
 
-.child {
-    margin: 5px 15px;
-}
-
 .interface{
     margin-left: 5px;
 }
@@ -94,7 +93,6 @@ p{
 
 .upload {
     position: relative;
-    border-radius: 10px;
     margin: 10px;
 }
 
@@ -126,10 +124,6 @@ label:hover{
 label img{
     width: 50px;
     height: 50px;
-}
-
-.upload-decision{
-    // что-нибудь придумать надо
 }
 
 button{

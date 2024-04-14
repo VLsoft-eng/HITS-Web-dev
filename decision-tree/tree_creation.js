@@ -137,9 +137,11 @@ export function createTreeHtml(node, parent) {
             html += '<div class="class">' + node.class + '</div>';
         }
         if (node.attribute.includes(attributes[attributes.length - 1])){
-            html += '<div id="' + node.attribute + '" class="node-label">' + attributes[attributes.length - 1] + '</div>';
+            html += '<div id="' + node.attribute + '" class="node-label">'
+                + attributes[attributes.length - 1] + '</div>';
         } else {
-            html += '<div id="' + node.attribute + '" class="node-label">' + node.attribute + '</div>';
+            html += '<div id="' + node.attribute + '" class="node-label">'
+                + node.attribute + '</div>';
         }
 
         html += '<div class="children">';
@@ -157,9 +159,7 @@ export function createTreeHtml(node, parent) {
 
 const canvas = document.getElementById("canvas");
 export const ctx = canvas.getContext("2d");
-const canvasRect = canvas.getBoundingClientRect();
-let x = canvasRect.left;
-let y = canvasRect.top;
+
 
 function drawLine(x1, y1, x2, y2){
     ctx.beginPath();
@@ -177,15 +177,20 @@ function drawLine(x1, y1, x2, y2){
 export function drawLines(node){
     const element = document.getElementById(node.attribute);
     const rect = element.getBoundingClientRect();
+    let canvasRect = canvas.getBoundingClientRect();
+    let canvasX = canvasRect.left;
+    let canvasY = canvasRect.top;
     if (node.children.length > 0) {
         for (let i = 0; i < node.children.length; i++) {
             const child = document.getElementById(node.children[i].attribute);
             if (node.children[i].attribute !== '') {
                 const childR = child.getBoundingClientRect();
-                drawLine((rect.left + rect.right) / 2 - x, rect.bottom - y + 4, (childR.left + childR.right) / 2 - x, childR.top - y - 4);
+                drawLine((rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 4,
+                    (childR.left + childR.right) / 2 - canvasX, childR.top - canvasY - 4);
                 drawLines(node.children[i])
             } else {
-                drawLine((rect.left + rect.right) / 2 - x, rect.bottom - y + 4, (rect.left + rect.right) / 2 - x, rect.bottom - y + 16);
+                drawLine((rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 4,
+                    (rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 16);
             }
         }
     }
