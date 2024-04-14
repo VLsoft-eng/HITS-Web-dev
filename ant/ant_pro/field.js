@@ -25,8 +25,8 @@ function draw(e){
 
         if (drawingWalls) {
             drawWall(x, y);
-            for (let i = x;i<x+20;i++){
-                for (let j = y;j<y+20;j++){
+            for (let i = x;i<x+35;i++){
+                for (let j = y;j<y+35;j++){
                     map[i][j]=-1;
                 }
             }
@@ -58,7 +58,7 @@ function drawColony(){
 }
 function drawWall(x,y){
     ctx.beginPath();
-    ctx.rect(x, y, 20, 20);
+    ctx.rect(x, y, 35, 35);
     ctx.fillStyle = 'navajowhite';
     ctx.fill();
     ctx.closePath();
@@ -127,9 +127,9 @@ function drawMap(ants) {
             }
         }
         if (ants[i].nation === 0) {
-            ctx.drawImage(antImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
+            ctx.drawImage(antImage, ants[i].x - 5, ants[i].y - 5, 10, 10);
         } else {
-            ctx.drawImage(anotherAntImage, ants[i].x - 10, ants[i].y - 10, 10, 10);
+            ctx.drawImage(anotherAntImage, ants[i].x - 5, ants[i].y - 10, 10, 10);
         }
     }
 
@@ -141,7 +141,9 @@ function drawMap(ants) {
     for (let i = 0; i < walls.length; i++) drawWall(walls[i].x, walls[i].y);
 }
 
-
+function info(){
+    alert ("Муравьиный алгоритм поиска кратчайшего пути.\n\nУлучшения: \nМуравьи-разведчики \nПоддержка двух колоний");
+}
 function clear(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     colonyPos = [];
@@ -188,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addWall').addEventListener('click', switchWalls);
     document.getElementById('addFood').addEventListener('click', switchFood);
     document.getElementById('delete').addEventListener('click', clear);
+    document.getElementById('info').addEventListener('click', info);
+
     canvas.addEventListener('mousedown', startDrawing);
     canvas.addEventListener('mousemove', draw);
    canvas.addEventListener('mouseup', endDrawing);

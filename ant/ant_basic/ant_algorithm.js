@@ -125,7 +125,7 @@ function antAlgorithm(){
             i++;
             iterate();
             let outputIterates = document.getElementById("iteratesCount");
-            let outputDistance = document.getElementById("shortest-distance-value");
+            let outputDistance = document.getElementById("value-block-value");
             outputDistance.innerHTML = Math.floor(bestPathLength);
             outputIterates.innerHTML = i;
             draw(bestPath,'navajowhite');

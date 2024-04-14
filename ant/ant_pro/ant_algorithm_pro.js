@@ -19,6 +19,7 @@ class Ant {
         this.hot = 1;
         this.timeWithout = 0;
         this.nation = nation;
+        this.class = 'soldier'
     }
 
     moveAnt() {
@@ -33,12 +34,8 @@ class Ant {
         let maxPheromone = -Infinity;
         let maxPheromoneX = this.x;
         let maxPheromoneY = this.y;
+        let rnd = Math.random();
 
-
-        if (Math.random() < 0.05){
-            this.moveAnt();
-            return;
-        }
         for (let dx = -searchRadius; dx <= searchRadius; dx++) {
             for (let dy = -searchRadius; dy <= searchRadius; dy++) {
                 const newX = Math.floor(this.x) + dx;
@@ -64,7 +61,7 @@ class Ant {
             }
         }
 
-        if (maxPheromone === -Infinity) {
+        if (maxPheromone === -Infinity || rnd < 0.1) {
             this.moveAnt();
         } else {
             const angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
@@ -99,15 +96,13 @@ class Ant {
         let prevMove=[this.x,this.y];
 
         // мувы муравьишки
-        if (this.following){
-            this.followAnt();
-        }
-        else if (this.sniffPheromone()){
-            this.following =true;
-        }
-        else {
-            this.moveAnt()
-        }
+        if (this.hot < 0.001){this.hot = 0;}
+        if (this.sniffPheromone()){this.following =true;}
+        if (this.class === 'scout' && !this.goHome){this.following = false;}
+
+        if (this.following){this.followAnt();}
+        else {this.moveAnt()}
+
         if (this.timeWithout > 700){
             this.hot = 0;
             this.goHome = true;
@@ -120,27 +115,32 @@ class Ant {
             this.direction += Math.PI;
             this.following = false;
         }
+
         // еда
         if (map[Math.floor(this.x)][Math.floor(this.y)] === -2){
             if (this.goHome === false){
                 this.goHome = true;
+
                 if (!this.sniffPheromone()){
                     this.following = false;
                 }
                 this.direction += Math.PI;
             }
+
             this.hot = 1;
             this.timeWithout = 0;
         }
+
         // дом
-        if (this.nation === 0 && Math.abs(this.x - colonyPos[0].x) < 5 && Math.abs(this.y - colonyPos[0].y) < 5 ||
-            this.nation === 1 && Math.abs(this.x - colonyPos[1].x) < 5 && Math.abs(this.y - colonyPos[1].y) < 5){
+        if (this.nation === 0 && Math.abs(this.x - colonyPos[0].x) < 2 && Math.abs(this.y - colonyPos[0].y) < 2 ||
+            this.nation === 1 && Math.abs(this.x - colonyPos[1].x) < 2 && Math.abs(this.y - colonyPos[1].y) < 2){
             if (this.goHome === true){
                 this.goHome = false;
             }
             if (!this.sniffPheromone()){
                 this.following = false;
             }
+
             this.hot = 1;
             this.timeWithout = 0;
         }
@@ -153,10 +153,10 @@ class Ant {
                 pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].home = 400 * this.hot;
                 pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].home = 400 * this.hot;
             } else {
-                pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].food = 400 * this.hot;
-                pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].food = 400 * this.hot;
-                pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].food = 400 * this.hot;
-                pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].food = 400 * this.hot;
+                pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].food = 800 * this.hot;
+                pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].food = 800 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y + 1)].food = 800 * this.hot;
+                pheromones[Math.floor(this.x)][Math.floor(this.y - 1)].food = 800 * this.hot;
             }
             pheromones[Math.floor(this.x + 1)][Math.floor(this.y)].family = this.nation;
             pheromones[Math.floor(this.x - 1)][Math.floor(this.y)].family = this.nation;
@@ -167,7 +167,7 @@ class Ant {
             this.pheromonePath.push({x: Math.floor(this.x), y: Math.floor(this.y + 1)});
             this.pheromonePath.push({x: Math.floor(this.x), y: Math.floor(this.y - 1)});
         }
-        this.hot*=0.98;
+        this.hot*=0.99;
         this.timeWithout ++;
     }
 }
@@ -198,12 +198,15 @@ function antAlgorithm(){
         isStarted = false;
         return;
     }
-    isStarted = true;
     if (colonyPos.length === 0) {alert('Поставьте колонию'); return;}
+    isStarted = true;
     // создание муравьев
     for (let i = 0;i <colonyPos.length;i++) {
         for (let j = 0; j < antCount.value/colonyPos.length; j++) {
             ants.push(new Ant(colonyPos[i].x, colonyPos[i].y,i));
+            if (j < antCount.value/colonyPos.length/5){
+                ants[ants.length - 1].class = 'scout';
+            }
         }
     }
     function visualize(){
@@ -218,6 +221,8 @@ function antAlgorithm(){
             }
         }
         drawMap(ants);
+        let outputDistance = document.getElementById("value-block-value");
+        outputDistance.innerHTML = Math.floor(ants.length);
         setTimeout(visualize,100-slider.value);
     }
     visualize();
