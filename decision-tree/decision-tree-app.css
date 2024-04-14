@@ -3,14 +3,27 @@ body {
     background-color: #111111;
 }
 
+#tree-block{
+    height: 500px;
+    width: 1355px;
+    display: flex;
+    margin-left: 25vh;
+}
+
 #tree-container{
     margin-left: 1.5px;
+    position: relative;
     border: 2px solid white;
-    width: 750px;
+    width: 1150px;
     height: 500px;
     border-radius: 10px;
     box-shadow: 0 0 10px white;
     background-color: rgba(255, 255, 255, .2);
+}
+
+#canvas {
+    position: absolute;
+    border-radius: 10px;
 }
 
 #header{
@@ -27,28 +40,37 @@ p{
     color: azure;
 }
 
-#tree-block{
-    height: 500px;
-    width: 955px;
-    display: flex;
-    margin-left: 50vh;
-}
-
-.tree {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+#tree {
+    margin-top: 10px;
 }
 
 .node {
-    margin: 10px;
-    text-align: center;
-    color: white;
-    border: 2px solid white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.node-label {
+    color: azure;
+    position: relative;
+    margin: 10px 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 5px;
+    padding-right: 5px;
     border-radius: 5px;
-    background: forestgreen;
-    background-size: auto;
-    padding: 10px;
+    font-size: 15px;
+    background-color: rgba(255, 255, 255, .2);
+    box-shadow: 0 0 5px rgba(255, 255, 255, .2);
+}
+
+.children {
+    display: flex;
+}
+
+.child {
+    margin: 5px 15px;
 }
 
 .interface{
@@ -109,7 +131,6 @@ label img{
 .upload-decision{
     // что-нибудь придумать надо
 }
-
 
 button{
     display: flex;

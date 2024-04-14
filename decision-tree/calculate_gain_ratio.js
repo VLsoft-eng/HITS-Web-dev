@@ -77,6 +77,7 @@ function findUniqueClasses(){
     }
 }
 
+// Сортировка по gain ratio
 function sortGainRatio(){
     for (let i = 0; i < attributes.length - 1; i++){
         for (let j = 0; j < attributes.length - 1; j++){
@@ -92,6 +93,7 @@ function sortGainRatio(){
     }
 }
 
+// Сортировка атрибутов по gain ratio
 export function sortAttributes() {
     uniqueClasses = [];
     findUniqueClasses();
@@ -113,7 +115,7 @@ export function sortAttributes() {
     // console.log("entropy", entropy);
     // console.log("splitInfo", splitInfo);
     // console.log("gainRatio", gainRatio);
-    // console.log("attributes", attributes);
-     console.log("classMatrix", classMatrix);
-     console.log("uniqueClasses", uniqueClasses);
+    //  console.log("attributes", attributes);
+    //  console.log("classMatrix", classMatrix);
+    //  console.log("uniqueClasses", uniqueClasses);
 }

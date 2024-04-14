@@ -4,6 +4,7 @@ import {sortAttributes, uniqueClasses} from './calculate_gain_ratio.js';
 
 export let root;
 
+// Получение индекса аттрибута
 export function getAttributeIndex(nameAttribute){
     for (let i = 0; i < attributes.length; i++){
         if (attributes[i] === nameAttribute){
@@ -12,6 +13,7 @@ export function getAttributeIndex(nameAttribute){
     }
 }
 
+// Получение вероятного уникального класса
 function getProbableClass(node, child, attributeIndex){
     let probableClass = uniqueClasses[attributeIndex][0];
     let index = 0;
@@ -25,26 +27,66 @@ function getProbableClass(node, child, attributeIndex){
     return index;
 }
 
+// Удаление ненужных веток
 function removeBranches(attribute, classValue, branches){
     let attributeIndex = getAttributeIndex(attribute);
     let newBranch = [];
-    for (let i = 0; i < branches.length; i++){
-        let branchIndex = branches[i];
+    for (let branchIndex of branches){
         if (classValue === classMatrix[branchIndex][attributeIndex]){
-            newBranch.push(branches[i]);
+            newBranch.push(branchIndex);
         }
     }
     return newBranch;
 }
 
+// Получение вероятного конечного листа
+function getProbableLeaf(branches){
+    let leaves = [];
+    let attributeIndex = attributes.length - 1;
+
+    for (let branchIndex of branches){
+        if (!leaves.includes(classMatrix[branchIndex][attributeIndex])){
+            leaves.push(classMatrix[branchIndex][attributeIndex]);
+        }
+    }
+
+    if (leaves.length === 1){
+        return leaves;
+    }
+
+    let count = [];
+    for (let i = 0; i < leaves.length; i++){
+        count[i] = 0;
+        for (let j = 0; j < branches.length; j++){
+            if (leaves[i] === classMatrix[branches[j]][attributeIndex]){
+                count[i]++;
+            }
+        }
+    }
+
+    for (let i = 0; i < leaves.length; i++){
+        for (let j = 0; j < leaves.length; j++){
+            if (count[i] > count[j]){
+                [count[i],count[j]] = [count[j],count[i]];
+                [leaves[i],leaves[j]] = [leaves[j],leaves[i]];
+            }
+        }
+    }
+
+    return leaves;
+}
+
+// Добавление конечных листьев
+let numberLeaf = 0;
 function createLeaves(attribute, node, branches) {
     if (node.children.length === 0){
-        node.addChild(new TreeNode("", classMatrix[branches[0]][attributes.length - 1]));
-        node.attribute = attributes[attributes.length - 1];
+        let leaf = getProbableLeaf(branches)[0];
+        node.addChild(new TreeNode("", leaf));
+        node.attribute = attributes[attributes.length - 1] + numberLeaf;
+        numberLeaf++;
         return;
     }
-    for (let i = 0; i < node.children.length; i++){
-        let child = node.children[i];
+    for (let child of node.children){
         let newBranches = removeBranches(node.attribute, child.class, branches);
         if (newBranches.length === 0){
             newBranches.push(getProbableClass(node, child, getAttributeIndex(node.attribute)));
@@ -53,7 +95,10 @@ function createLeaves(attribute, node, branches) {
     }
 }
 
-function createStructure(){
+// Создание структуры дерева
+export function createStructure(){
+    sortAttributes();
+
     let indexAttribute = getAttributeIndex(attributes[0]);
     root = new TreeNode(attributes[indexAttribute], "");
 
@@ -83,9 +128,65 @@ function createStructure(){
     createLeaves(root.attribute, root, branches)
 }
 
-export function buildTree() {
-    sortAttributes();
-    createStructure();
+// Создание дерева в html
+export function createTreeHtml(node, parent) {
+    let html = '<div class="node">';
 
-    console.log(root);
+    if (node.attribute) {
+        if (node !== root) {
+            html += '<div class="class">' + node.class + '</div>';
+        }
+        if (node.attribute.includes(attributes[attributes.length - 1])){
+            html += '<div id="' + node.attribute + '" class="node-label">' + attributes[attributes.length - 1] + '</div>';
+        } else {
+            html += '<div id="' + node.attribute + '" class="node-label">' + node.attribute + '</div>';
+        }
+
+        html += '<div class="children">';
+        for (const child of node.children) {
+            html += createTreeHtml(child, node);
+        }
+        html += '</div>';
+    } else {
+        html += '<div id="' + "leaf" + parent.attribute + '" class="node-label">' + node.class + '</div>';
+    }
+
+    html += '</div>';
+    return html;
+}
+
+const canvas = document.getElementById("canvas");
+export const ctx = canvas.getContext("2d");
+const canvasRect = canvas.getBoundingClientRect();
+let x = canvasRect.left;
+let y = canvasRect.top;
+
+function drawLine(x1, y1, x2, y2){
+    ctx.beginPath();
+    ctx.strokeStyle = "white";
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(255,255,255,1)';
+    ctx.shadowBlur = 5;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+
+// Рисования линий между родителями и детьми
+export function drawLines(node){
+    const element = document.getElementById(node.attribute);
+    const rect = element.getBoundingClientRect();
+    if (node.children.length > 0) {
+        for (let i = 0; i < node.children.length; i++) {
+            const child = document.getElementById(node.children[i].attribute);
+            if (node.children[i].attribute !== '') {
+                const childR = child.getBoundingClientRect();
+                drawLine((rect.left + rect.right) / 2 - x, rect.bottom - y + 4, (childR.left + childR.right) / 2 - x, childR.top - y - 4);
+                drawLines(node.children[i])
+            } else {
+                drawLine((rect.left + rect.right) / 2 - x, rect.bottom - y + 4, (rect.left + rect.right) / 2 - x, rect.bottom - y + 16);
+            }
+        }
+    }
 }

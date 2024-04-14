@@ -1,3 +1,4 @@
+// Структура дерева
 export class TreeNode {
     constructor(attribute, valClass) {
         this.attribute = attribute;

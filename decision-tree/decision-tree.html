@@ -11,10 +11,10 @@
 <div id="header">
     <h1>Code/Websitehog/decision_tree_algorithm</h1>
 </div>
-
 <div id="tree-block">
     <div id="tree-container">
-        <div id="tree"></div>
+        <canvas id="canvas" width="1150px" height="500px"></canvas>
+         <div id="tree"></div>
     </div>
 
     <div class="interface">
@@ -26,10 +26,16 @@
                         <input type="file" id="upload-tree" class="upload-input" accept=".csv">
                     </label>
                     <button id="build-tree">
-                        <img id="build-tree-img" src="../source/decision_tree_icons/build_tree.png" alt="">
+                        <img id="build-tree-img" src="../source/decision_tree_icons/build.png" alt="">
                     </button>
-                    <button id="start">
+                    <button id="delete-tree">
+                        <img id="delete-tree-img" src="../source/decision_tree_icons/delete.png" alt="">
+                    </button>
+                    <button id="start-bypassing">
                         <img id="start-img" src="../source/decision_tree_icons/start.png" alt="">
+                    </button>
+                    <button id="tree-optimization">
+                        <img id="tree-optimization-img" src="../source/decision_tree_icons/optimization.png" alt="">
                     </button>
                 </div>
                 <label class="upload-decision">
