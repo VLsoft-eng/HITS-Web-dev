@@ -1,6 +1,7 @@
 import {createStructure, createTreeHtml, drawLines, root, ctx} from './tree_creation.js'
 import {treeBypassing} from './tree_bypassing.js'
 import {treeOptimization} from "./tree_optimization.js";
+import {uniqueClasses} from "./calculate_gain_ratio.js";
 
 export let isBypassing;
 export let attributes;
@@ -18,8 +19,13 @@ function deleteTree(node){
     node = null;
 }
 
+export function inverseIsBypassing(){
+    isBypassing = !isBypassing;
+}
+
 // Обновление всего
-function reset(){
+export function reset(){
+    result.innerHTML = '';
     treeHTML.innerHTML = '';
     classMatrix = [];
     attributes = [];
@@ -54,10 +60,22 @@ inputFileButton.addEventListener('change', function() {
     reader.readAsText(file);
 });
 
+export function readPreparedDataset(dataset){
+    reset();
+    const lines = dataset.split('\n');
+    lines[0].split(',').forEach(attribute => attributes.push(attribute.trim()));
+    attributes.forEach(attribute => copyAttributes.push(attribute));
+    for (let i = 1; i < lines.length - 1; i++){
+        let row = [];
+        lines[i].split(',').forEach(elem => row.push(elem.trim()));
+        classMatrix.push(row);
+    }
+}
+
 // Построение дерева
 const buildTreeButton = document.getElementById('build-tree');
 buildTreeButton.addEventListener('click',function (){
-    if (!attributes.length){
+    if (!attributes){
         alert("Загрузите csv-файл");
         return;
     }
@@ -67,6 +85,7 @@ buildTreeButton.addEventListener('click',function (){
     if (!root || root.children.length === 0) {
         createStructure();
     }
+    result.innerHTML = '';
     treeHTML.innerHTML = createTreeHtml(root);
     ctx.reset();
     drawLines(root);
@@ -75,7 +94,11 @@ buildTreeButton.addEventListener('click',function (){
 // Удаление всего
 const deleteTreeButton = document.getElementById('delete-tree');
 deleteTreeButton.addEventListener('click',function (){
+    result.innerHTML = '';
     treeHTML.innerHTML = '';
+    entryField.value = '';
+    inputPath = '';
+    path = [];
     ctx.reset();
     isBypassing = false;
 });
@@ -88,11 +111,11 @@ startBypassingButton.addEventListener('click', function (){
         return;
     }
     if (!root || root.children.length === 0 || treeHTML.innerHTML === ''){
-        alert("Сначала постройте дерево");
+        alert("Постройте дерево");
         return;
     }
     if (!inputPath){
-        alert("Сначала введите принятые решения");
+        alert("Введите принятые решения");
         return;
     }
     path = [];
@@ -101,14 +124,49 @@ startBypassingButton.addEventListener('click', function (){
         alert("Введите нужное количество решений");
         return;
     }
+    result.innerHTML = ''
     treeHTML.innerHTML = createTreeHtml(root);
     isBypassing = true;
     treeBypassing(root)
 });
 
-export function inverseIsBypassing(){
-    isBypassing = !isBypassing;
+function getRandomClass(attribute){
+    for (let i = 0; i < attributes.length - 1; i++){
+        if (attribute === attributes[i]){
+            const index = Math.floor(Math.random() * uniqueClasses[i].length);
+            return uniqueClasses[i][index].class;
+        }
+    }
 }
+
+function createRandomPath(){
+    inputPath = '';
+    for(let i = 0; i < attributes.length - 1; i++){
+        if (i < attributes.length - 2) {
+            inputPath += getRandomClass(copyAttributes[i]) + ',';
+        } else {
+            inputPath += getRandomClass(copyAttributes[i]);
+        }
+    }
+    entryField.value = inputPath;
+    result.innerHTML = ''
+    treeHTML.innerHTML = createTreeHtml(root);
+    ctx.reset();
+    drawLines(root);
+}
+
+const createRandomPathButton = document.getElementById('create-random-path');
+createRandomPathButton.addEventListener('click', function (){
+    if (!uniqueClasses.length){
+        alert("Постройте дерево");
+        return;
+    }
+    if (isBypassing) {
+        alert("Дождитесь завершение обхода");
+        return;
+    }
+    createRandomPath();
+});
 
 // Поле ввода решений
 let inputPath;
@@ -121,11 +179,12 @@ entryField.addEventListener('input', function() {
 const treeOptimizationButton = document.getElementById('tree-optimization');
 treeOptimizationButton.addEventListener('click', function () {
     if (!root || !attributes || treeHTML.innerHTML === '') {
-        alert("Сначала постройте дерево");
+        alert("Сперва постройте дерево");
         return;
     }
     isBypassing = false;
     treeOptimization(root);
+    result.innerHTML = '';
     treeHTML.innerHTML = createTreeHtml(root);
     ctx.reset();
     drawLines(root);
@@ -142,3 +201,8 @@ sliderSpeed.addEventListener('input', function (){
         timeout = 100000000;
     }
 });
+
+const result = document.getElementById('result-value');
+export function showResult(value) {
+    result.innerHTML = value;
+}

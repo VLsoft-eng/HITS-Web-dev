@@ -1,6 +1,6 @@
 import {attributes, classMatrix} from './settings.js'
 import {TreeNode} from './tree_data.js'
-import {sortAttributes, uniqueClasses} from './calculate_gain_ratio.js';
+import {sortAttributes, uniqueClasses} from './calculate_gain_ratio.js'
 
 export let root;
 
@@ -17,6 +17,7 @@ export function getAttributeIndex(nameAttribute){
 function getProbableClass(node, child, attributeIndex){
     let probableClass = uniqueClasses[attributeIndex][0];
     let index = 0;
+
     for (let i = 0; i < uniqueClasses[attributeIndex].length; i++){
         if (probableClass.amount < uniqueClasses[attributeIndex][i].amount
                && child.class === classMatrix[getAttributeIndex(node.attribute)][i]){
@@ -24,6 +25,7 @@ function getProbableClass(node, child, attributeIndex){
             index = i;
         }
     }
+
     return index;
 }
 
@@ -31,11 +33,13 @@ function getProbableClass(node, child, attributeIndex){
 function removeBranches(attribute, classValue, branches){
     let attributeIndex = getAttributeIndex(attribute);
     let newBranch = [];
+
     for (let branchIndex of branches){
         if (classValue === classMatrix[branchIndex][attributeIndex]){
             newBranch.push(branchIndex);
         }
     }
+
     return newBranch;
 }
 
@@ -86,6 +90,7 @@ function createLeaves(attribute, node, branches) {
         numberLeaf++;
         return;
     }
+
     for (let child of node.children){
         let newBranches = removeBranches(node.attribute, child.class, branches);
         if (newBranches.length === 0){
@@ -104,6 +109,7 @@ export function createStructure(){
 
     let queue = [];
     queue.push(root);
+
     let count = 1;
     while (queue.length > 0){
         let node = queue.shift();
@@ -159,7 +165,7 @@ export function createTreeHtml(node, parent) {
 
 const canvas = document.getElementById("canvas");
 export const ctx = canvas.getContext("2d");
-
+ctx.imageSmoothingEnabled = false;
 
 function drawLine(x1, y1, x2, y2){
     ctx.beginPath();
@@ -176,22 +182,23 @@ function drawLine(x1, y1, x2, y2){
 // Рисования линий между родителями и детьми
 export function drawLines(node){
     const element = document.getElementById(node.attribute);
-    const rect = element.getBoundingClientRect();
-    let canvasRect = canvas.getBoundingClientRect();
-    let canvasX = canvasRect.left;
-    let canvasY = canvasRect.top;
+    const elementRect = element.getBoundingClientRect();
+    const x = ((elementRect.left + elementRect.right) / 2) - canvas.getBoundingClientRect().left;
+    const y = elementRect.bottom - canvas.getBoundingClientRect().top;
     if (node.children.length > 0) {
         for (let i = 0; i < node.children.length; i++) {
             const child = document.getElementById(node.children[i].attribute);
             if (node.children[i].attribute !== '') {
-                const childR = child.getBoundingClientRect();
-                drawLine((rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 4,
-                    (childR.left + childR.right) / 2 - canvasX, childR.top - canvasY - 4);
+                const childRect = child.getBoundingClientRect();
+                const childX = (childRect.left + childRect.right) / 2 - canvas.getBoundingClientRect().left;
+                const childY = childRect.top - canvas.getBoundingClientRect().top;
+                drawLine(x, y + 4, childX, childY - 4);
                 drawLines(node.children[i])
             } else {
-                drawLine((rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 4,
-                    (rect.left + rect.right) / 2 - canvasX, rect.bottom - canvasY + 16);
+                drawLine(x, y + 4, x, y + 14);
             }
         }
     }
 }
+
+
