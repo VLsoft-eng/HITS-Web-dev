@@ -4,6 +4,7 @@ const paintbrushSizeSlider = document.getElementById('select_paintbrush_size')
 const clearButton = document.getElementById('clear_button')
 export const mainCanvas = document.getElementById('main_canvas');
 const secondCanvas = document.getElementById('second_canvas')
+
 mainCanvas.width = 500;
 mainCanvas.height = 500;
 secondCanvas.height = 50;

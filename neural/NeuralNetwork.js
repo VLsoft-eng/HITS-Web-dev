@@ -1,11 +1,8 @@
 function sigmoid(z) {
-    console.log(1.0 / (1.0 + Math.exp(-z)));
     return 1.0 / (1.0 + Math.exp(-z));
 }
 
 function matrixMulti(matrix, vector) {
-    console.log(vector)
-    console.log()
     let result = new Array(matrix.length).fill(0.0);
     for (let i = 0; i < matrix.length; i++) {
         for (let j = 0; j < matrix[i].length; j++) {
@@ -42,10 +39,6 @@ export function fowardPropagation(input) {
         .then(data => {
             let weights = data.w;
             let biases = data.b;
-
-            console.log("Test" + weights.length + " " + biases[0].length + " " + weights[0][0].length)
-            console.log("Test" + weights.length + " " + biases[1].length + " " + weights[1][0].length)
-            console.log("Test" + weights.length + " " + biases[1].length + " " + weights[1][0].length)
 
             // Проход по слоям нейронной сети
             for (let i = 0; i < weights.length; i++) {
