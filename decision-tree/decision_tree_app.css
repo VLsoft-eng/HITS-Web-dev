@@ -157,12 +157,15 @@ p{
     background-color: white;
 }
 
-#select-dataset:focus {
-    outline: none;
+#select-dataset:hover{
     box-shadow: 0 0 5px #727272,
     0 0 5px #b7b7b7,
     0 0 10px #cecece,
     0 0 15px #ffffff;
+}
+
+#select-dataset:focus {
+    outline: none;
 }
 
 .buttons-container{
