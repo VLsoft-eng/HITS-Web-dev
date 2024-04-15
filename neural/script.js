@@ -1,3 +1,4 @@
+import {fowardPropagation} from "./NeuralNetwork.js";
 
 const paintbrushSizeSlider = document.getElementById('select_paintbrush_size')
 const clearButton = document.getElementById('clear_button')
@@ -18,7 +19,9 @@ export let currentY = 0;
 export let previousX = 0;
 export let previousY = 0;
 
-let fetchPaintbrushSize = document.getElementById('paintbrush_size')
+let fetchOutputValue = document.getElementById('output');
+
+let fetchPaintbrushSize = document.getElementById('paintbrush_size');
 fetchPaintbrushSize.innerHTML = lineWidth;
 paintbrushSizeSlider.addEventListener('input', () => {
     lineWidth = paintbrushSizeSlider.value;
@@ -27,6 +30,8 @@ paintbrushSizeSlider.addEventListener('input', () => {
 
 clearButton.addEventListener('click', () => {
     mainContext.clearRect(0, 0, mainCanvas.width, mainCanvas.height);
+    secondContext.clearRect(0, 0, secondCanvas.width, secondCanvas.height);
+    fetchOutputValue.innerHTML = "-";
 })
 mainCanvas.addEventListener('mousemove', (event) => {
     previousX = currentX;
@@ -183,15 +188,17 @@ function toInputFormat(imgPixels, img) {
 
     return toOneDemencityGrayscaleArray(secondContext.getImageData(0, 0, secondCanvas.width, secondCanvas.height).data, 50);
 }
-function getAndScaleImport() {
-    let img = new Image();
-    img.src = mainCanvas.toDataURL();
+async function getAndScaleImport() {
+    return new Promise((resolve) => {
+        let img = new Image();
+        img.src = mainCanvas.toDataURL();
 
-    img.onload = () => {
-        let imagePixels = mainContext.getImageData(0, 0, mainCanvas.width, mainCanvas.height).data;
-        let correctInputImgPixels = toInputFormat(toOneDemencityGrayscaleArray(imagePixels, mainCanvas.width), img);
-        return correctInputImgPixels;
-    }
+        img.onload = () => {
+            let imagePixels = mainContext.getImageData(0, 0, mainCanvas.width, mainCanvas.height).data;
+            let correctInputImgPixels = toInputFormat(toOneDemencityGrayscaleArray(imagePixels, mainCanvas.width), img);
+            resolve(correctInputImgPixels);
+        }
+    });
 }
 
 function getResult(prob) {
@@ -209,5 +216,8 @@ function getResult(prob) {
 }
 
 function runNeuralNetwork(data) {
-
+    fowardPropagation(data)
+        .then(input => {
+            fetchOutputValue.innerHTML = (getResult(input));
+        })
 }
