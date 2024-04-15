@@ -5,8 +5,8 @@ import pandas as pd
 import numpy as np
 
 def getTrainingData():
-    trdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\mnist_train_50x50.csv", header=None)
-    tdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\mnist_test_50x50.csv", header=None)
+    trdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\train.csv", header=None)
+    tdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\test.csv", header=None)
 
     newTrData = []
     newTData = []

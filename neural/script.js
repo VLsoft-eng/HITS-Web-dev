@@ -14,7 +14,7 @@ export let mainContext = mainCanvas.getContext('2d');
 let secondContext = secondCanvas.getContext('2d');
 
 export let isDrawing = false;
-export let lineWidth = 5;
+export let lineWidth = 25;
 export let currentX = 0;
 export let currentY = 0;
 export let previousX = 0;
