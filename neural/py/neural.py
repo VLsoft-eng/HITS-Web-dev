@@ -5,6 +5,9 @@ import json
 
 from preprocess_utils import getTrainingData
 
+#референсы :
+#https://www.susu.ru/sites/default/files/laboratornaya_rabota.pdf
+# https://www.youtube.com/watch?v=gBYQWvz13Ds
 
 class NeuralNetwork:
     weights: List[np.ndarray]
