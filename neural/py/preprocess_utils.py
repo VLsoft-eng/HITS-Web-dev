@@ -1,11 +1,12 @@
 import csv
+
 import pandas as pd
+
 import numpy as np
 
 def getTrainingData():
-    pairs = []
-    trdata = pd.read_csv(r"neural/py/mnist_train.csv", header=None)
-    tdata = pd.read_csv(r"neural/py/mnist_test.csv", header=None)
+    trdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\mnist_train_50x50.csv", header=None)
+    tdata = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\mnist_test_50x50.csv", header=None)
 
     newTrData = []
     newTData = []
@@ -14,7 +15,7 @@ def getTrainingData():
         imageData = np.array(row[1:], dtype=np.uint8).reshape(-1,1)
         imageData = imageData / 255.0
         oneHot = np.zeros((10, 1))
-        oneHot[answer] = 1.0
+        oneHot[int(answer)] = 1.0
         newTrData.append((imageData, oneHot))
 
     for index, row in tdata.iterrows():
@@ -22,7 +23,21 @@ def getTrainingData():
         imageData = np.array(row[1:], dtype=np.uint8).reshape(-1,1)
         imageData = imageData / 255.0
         oneHot = np.zeros((10, 1))
-        oneHot[answer] = 1.0
+        oneHot[int(answer)] = 1.0
         newTData.append((imageData, oneHot))
 
     return newTData, newTrData
+
+def getAdditionDS():
+    tr = pd.read_csv(r"C:\Users\bydeflt\PycharmProjects\neural\train\dsNines.csv", header=None)
+
+    trData = []
+    for index, row in tr.iterrows():
+        answer = row[0]
+        imageData = np.array(row[1:], dtype=np.uint8).reshape(-1, 1)
+        imageData = imageData / 255.0
+        oneHot = np.zeros((10, 1))
+        oneHot[9] = 1.0
+        trData.append((imageData, oneHot))
+
+    return trData
