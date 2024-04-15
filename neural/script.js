@@ -7,6 +7,7 @@ mainCanvas.width = 500;
 mainCanvas.height = 500;
 secondCanvas.height = 50;
 secondCanvas.width = 50;
+
 export let mainContext = mainCanvas.getContext('2d');
 let secondContext = secondCanvas.getContext('2d');
 
@@ -50,9 +51,11 @@ mainCanvas.addEventListener('mousemove', (event) => {
     previousX = currentX;
     previousY = currentY;
 });
-mainCanvas.addEventListener('mouseup', () => {
+mainCanvas.addEventListener('mouseup', async () => {
     isDrawing = false;
-    getAndScaleImport();
+    let correctInputPixels = await getAndScaleImport();
+    console.log(correctInputPixels)
+    runNeuralNetwork(correctInputPixels);
 });
 mainCanvas.addEventListener('mouseout', () => {isDrawing = false;});
 mainCanvas.addEventListener('mousedown', (event) => {
@@ -61,23 +64,27 @@ mainCanvas.addEventListener('mousedown', (event) => {
     currentY = event.clientY - mainCanvas.offsetTop;
 });
 
-function toOneDemencityGrayscaleArray(img) {
-    let GS = Array(mainCanvas.width * mainCanvas.height)
-    for (let i = 3; i < img.length; i += 4) {
-        GS[Math.floor(i / 4)] = img[i] / 255;
-    }
 
-    return GS
+//переводим изобрвжение в grayscale. т.к. канвас пустой, то по альфа каналу можно отследить степень черности.
+//нормализуем 0-255 значение к [0,1], т.к. при обучении тоже выполнялась нормализация к этому интервалу
+function toOneDemencityGrayscaleArray(img, size) {
+    let GS = Array(size*size)
+    console.log(img)
+    for (let i = 3; i < img.length; i += 4) {
+        GS[Math.floor(i / 4)] = img[i] / 255.0;
+    }
+    console.log(GS.length)
+    return GS;
 }
 
 function getImgBorders(img, imgHeight, imgWidth) {
-    
+
     let borders = []; // left, right, top, bottom
 
     // Определение левой границы
     for (let x = 0; x < imgWidth; x += 1) {
         let found = false;
-        for (let y = 0; y < imgHeight; y+= 4) {
+        for (let y = 0; y < imgHeight; y+= 1) {
             let currPixelIndex = (y * imgWidth + x);
             if (img[currPixelIndex] != 0) {
                 borders.push(x);
@@ -91,7 +98,7 @@ function getImgBorders(img, imgHeight, imgWidth) {
     // Определение правой границы
     for (let x = imgWidth - 1; x >= 0; x -= 1) {
         let found = false;
-        for (let y = 0; y < imgHeight; y += 4) {
+        for (let y = 0; y < imgHeight; y += 1) {
             let currPixelIndex = (y * imgWidth + x);
             if (img[currPixelIndex] != 0) {
                 borders.push(Math.min(x + 1, imgWidth));
@@ -145,8 +152,6 @@ function toInputFormat(imgPixels, img) {
     //ориг ДС - 28x28 и прим. 20x20 - обл. рисования
     //50х50 => прим. 36x36 - обл рисования
     const padding = 7;
-    placeForDigitWidth += padding * 2;
-    placeForDigitHeight += padding * 2;
 
     // Очищаем второй канвас перед отрисовкой
     secondContext.clearRect(0, 0, secondCanvas.width, secondCanvas.height);
@@ -176,7 +181,7 @@ function toInputFormat(imgPixels, img) {
         scaledHeight
     );
 
-    return secondContext.getImageData(0, 0, 50, 50);
+    return toOneDemencityGrayscaleArray(secondContext.getImageData(0, 0, secondCanvas.width, secondCanvas.height).data, 50);
 }
 function getAndScaleImport() {
     let img = new Image();
@@ -184,7 +189,25 @@ function getAndScaleImport() {
 
     img.onload = () => {
         let imagePixels = mainContext.getImageData(0, 0, mainCanvas.width, mainCanvas.height).data;
-        console.log(imagePixels.length)
-        let correctInputImgPixels = toInputFormat(toOneDemencityGrayscaleArray(imagePixels), img);
+        let correctInputImgPixels = toInputFormat(toOneDemencityGrayscaleArray(imagePixels, mainCanvas.width), img);
+        return correctInputImgPixels;
     }
+}
+
+function getResult(prob) {
+    let digit = 0;
+    let maxProb = -1;
+
+    for (let i = 0; i < prob.length; i++) {
+        if (maxProb < prob[i]) {
+            maxProb = prob[i];
+            digit = i;
+        }
+    }
+
+    return digit;
+}
+
+function runNeuralNetwork(data) {
+
 }
