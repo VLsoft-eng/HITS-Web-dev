@@ -19,6 +19,7 @@ export let dbscanUsedDots = [];
 export const canvas = document.getElementById('cluster_canvas');
 export const btn = document.getElementById('draw_button');
 const cbtn = document.getElementById('clear_button');
+const infoBtn = document.getElementById('info_button');
 export const metricSelector = document.getElementById('select_metric');
 export const kmeansClustersSlider = document.getElementById('select_kmeans_clusters');
 export const hierarchicalClustersSlider = document.getElementById('select_hierarchical_clusters');
@@ -44,6 +45,7 @@ canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('mousedown', startDrawing);
 cbtn.addEventListener('click', clearAndReset)
 btn.addEventListener('click', function (){main_clustering(dots)});
+infoBtn.addEventListener('click', () => {alert("Как определять кластеры и методы:\n\nЛинии от точек до квадратов(центроидов): Kmeans.\nЦвет верхней части точки: Иерархический\nЦвет нижней части точки: DBSCAN.")})
 kmeansClustersSlider.addEventListener('input', () => {
     fetchKmeansClustersCount.textContent = kmeansClustersSlider.value;
     kmeansClustersCount = kmeansClustersSlider.value;

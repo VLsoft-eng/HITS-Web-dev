@@ -82,8 +82,9 @@
         <div id = interface_block>
             <div id="button_container">
                 <div class="button-container">
-                    <div><button id="draw_button"><img src="../source/clustering_algorithm_images/start.png" alt="Кнопка «START»"></button></div>
-                    <div><button id="clear_button"><img src="../source/clustering_algorithm_images/delete.png" alt="Кнопка «DELETE»"></button></div>
+                    <button id="draw_button"><img src="../source/clustering_algorithm_images/start.png" alt="Кнопка «START»"></button>
+                    <button id="clear_button"><img src="../source/clustering_algorithm_images/delete.png" alt="Кнопка «DELETE»"></button>
+                    <button id = "info_button"><img src="../source/ant_algorithm_images/info.png" alt="Кнопка <INFO>"></button>
                 </div>
             </div>
 
@@ -101,7 +102,7 @@
             </div>
 
             <div id="slider_container">
-                <label for="select_kmeans_clusters">K-Means++ :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_kmeans_clusters">
+                <label for="select_kmeans_clusters">K-Means :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_kmeans_clusters">
                 <p>Clusters: <span id="kmeans_clusters_count"></span></p>
                 <label for="select_hierarchical_clusters">Hierarchical :</label><input type="range" min="1" max="50" value="11" class="slider" id="select_hierarchical_clusters">
                 <p>Clusters: <span id="hierarchical_clusters_count"></span></p>
