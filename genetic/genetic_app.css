@@ -27,9 +27,12 @@ p{
 #graph-block{
     height: 500px;
     width: 750px;
+    position: absolute;
     display: flex;
-    margin-left: 50vh;
-    border-radius: 10px;;
+    top: 40%;
+    left: 45%;
+    transform: translate(-45%, -40%);
+    border-radius: 10px;
     background-color: rgba(255, 255, 255, .2);
 }
 
