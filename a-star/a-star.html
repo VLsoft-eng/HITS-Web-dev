@@ -78,24 +78,30 @@
     <h1>Code/Websitehog/a_star_algorithm</h1>
 </div>
 
-<div id="mazeBlock">
-    <div id="maze"></div>
-    <div>
-        <button id="start"><img src="../source/a-star_images/start.png" alt="Кнопка «START»"></button>
-        <button id="auto"><img src="../source/a-star_images/auto.png" alt="Кнопка «AUTOGENERATE MAZE»"></button>
-        <button id="add"><img src="../source/a-star_images/set.png" alt="Кнопка «ADD START AND FINISH»"></button>
-        <button id="delete"><img src="../source/neural_network_images/delete.png" alt="Кнопка «DELETE FIELD»"></button>
+<div class="container">
+    <div id="mazeBlock">
+        <div id="maze"></div>
+    </div>
+    <div id="interfaceBlock">
+        <div class="button-container">
+            <button id="start"><img src="../source/a-star_images/start.png" alt="Кнопка «START»"></button>
+            <button id="auto"><img src="../source/a-star_images/auto.png" alt="Кнопка «AUTOGENERATE MAZE»"></button>
+            <button id="add"><img src="../source/a-star_images/set.png" alt="Кнопка «ADD START AND FINISH»"></button>
+            <button id="delete"><img src="../source/a-star_images/delete.png" alt="Кнопка «DELETE FIELD»"></button>
+        </div>
+        <div class="slider-container">
+            <label for="range"></label><input type="range" min="0" max="100" value="100" class="slider" id="range">
+            <p>speed: <span id="value"></span> %</p>
+            <!--для изменения размера поля менять значение value-->
+            <label for="range"></label><label for="size"></label><input type="range" min="4" max="100" value="20" class="slider" id="size">
+            <p>size: <span id="sizeValue"></span></p>
+        </div>
     </div>
 </div>
 
-<div class="slider-container">
-    <label for="range"></label><input type="range" min="0" max="100" value="50" class="slider" id="range">
-    <p>speed: <span id="value"></span> %</p>
-</div>
-
-<script src="maze.js"></script>
-<script src="a_star_algorithm.js"></script>
-<script src="prima_maze_generation.js"></script>
+<script type='module' src="maze.js"></script>
+<script type='module' src="a_star_algorithm.js"></script>
+<script type='module' src="prima_maze_generation.js"></script>
 
 </body>
 </html>
