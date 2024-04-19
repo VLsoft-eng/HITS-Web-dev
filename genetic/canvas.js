@@ -24,7 +24,7 @@ canvas.addEventListener('click', function (event){
         return;
     }
 
-    if(points.length > 50){
+    if(points.length > 49){
         alert('Я не буду запускаться с таким большим количеством точек');
         return;
     }
