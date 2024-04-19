@@ -3,6 +3,7 @@ import {attributes, classMatrix} from "./settings.js";
 export let uniqueClasses = [];
 let gainRatio;
 
+// Подсчет суммы энтропий
 function calculateSum(columnIndex, attributeValue){
     let outcomes = [];
     let count = 0;
@@ -35,6 +36,7 @@ function calculateSum(columnIndex, attributeValue){
     return entropySum;
 }
 
+// Подсчет энтропии
 function calculateEntropy(columnIndex) {
     let entropy = 0;
 
@@ -55,6 +57,7 @@ function calculateSplitInfo(columnIndex) {
     return splitInfo;
 }
 
+// Поиск уникальный классов в столбцах
 function findUniqueClasses(){
     for (let i = 0; i < attributes.length; i++){
         let uniqueClassesInColumn = [];
@@ -73,6 +76,7 @@ function findUniqueClasses(){
                 }
             }
         }
+
         uniqueClasses.push(uniqueClassesInColumn);
     }
 }

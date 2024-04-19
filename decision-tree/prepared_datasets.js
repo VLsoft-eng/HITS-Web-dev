@@ -1,4 +1,4 @@
-import {readPreparedDataset, reset} from './settings.js'
+import {readDataset, reset} from './settings.js'
 
 const preparedDatasets =[
     "Солнце,Температура,Влажность,Ветер,Игра состоится\n" +
@@ -15,7 +15,7 @@ const preparedDatasets =[
     "Солнечно,Умеренно,Нормальная,Да,Да\n" +
     "Переменная облачность,Умеренно,Высокая,Да,Да\n" +
     "Переменная облачность,Жарко,Нормальная,Нет,Да\n" +
-    "Пасмурно,Умеренно,Высокая,Да,Нет",
+    "Пасмурно,Умеренно,Высокая,Да,Нет\n",
 
     "CGPA,Interactive,Practical Knowledge,Comm Skills,Job Offer\n" +
     ">=9,Yes,Very good,Good,Yes\n" +
@@ -27,7 +27,7 @@ const preparedDatasets =[
     "<8,Yes,Good,Poor,No\n" +
     ">=9,No,Very good,Good,Yes\n" +
     ">=8,Yes,Good,Good,Yes\n" +
-    ">=8,Yes,Average,Good,Yes"
+    ">=8,Yes,Average,Good,Yes\n"
 ]
 
 
@@ -39,10 +39,10 @@ selectDataset.addEventListener('change', function() {
             alert("Куда жмешь?");
             break
         case "first":
-            readPreparedDataset(preparedDatasets[0]);
+            readDataset(preparedDatasets[0].split("\n"));
             break;
         case "second":
-            readPreparedDataset(preparedDatasets[1]);
+            readDataset(preparedDatasets[1].split("\n"));
             break;
     }
 });

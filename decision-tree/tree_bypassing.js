@@ -14,6 +14,7 @@ function getClass(attribute){
 export function treeBypassing(node) {
     document.getElementById(node.attribute).style.background = "#b7b7b7";
     document.getElementById(node.attribute).style.boxShadow = "0 0 5px #b7b7b7";
+
     if (node.children.length === 1) {
         setTimeout(() => {
             if (!isBypassing) {

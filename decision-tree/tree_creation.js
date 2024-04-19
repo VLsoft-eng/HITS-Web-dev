@@ -120,6 +120,7 @@ export function createStructure(){
             let child = new TreeNode(attributes[count], uniqueClasses[indexAttribute][i].class);
             node.addChild(child)
             count++;
+
             if (count < attributes.length) {
                 queue.push(child);
             }
@@ -140,7 +141,7 @@ export function createTreeHtml(node, parent) {
 
     if (node.attribute) {
         if (node !== root) {
-            html += '<div class="class">' + node.class + '</div>';
+            html += '<div id="' + parent.attribute + '-' + node.class + '"  class="class">' + node.class + '</div>';
         }
         if (node.attribute.includes(attributes[attributes.length - 1])){
             html += '<div id="' + node.attribute + '" class="node-label">'
@@ -151,8 +152,10 @@ export function createTreeHtml(node, parent) {
         }
 
         html += '<div class="children">';
+        let count = 0;
         for (const child of node.children) {
-            html += createTreeHtml(child, node);
+            html += createTreeHtml(child, node, count);
+            count++;
         }
         html += '</div>';
     } else {
@@ -166,6 +169,16 @@ export function createTreeHtml(node, parent) {
 const canvas = document.getElementById("canvas");
 export const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
+
+// Установка позиции для класса
+function setClassPosition(parent, node){
+    const parentRect = document.getElementById(parent).getBoundingClientRect();
+    const nodeClass = document.getElementById(parent + "-" + node);
+    const nodeClassRect = nodeClass.getBoundingClientRect();
+    const middleParent = (parentRect.left + parentRect.right) / 2;
+    const middleClass = (nodeClassRect.left + nodeClassRect.right) / 2;
+    nodeClass.style.left = (middleParent + middleClass) / 2 - middleClass + "px";
+}
 
 function drawLine(x1, y1, x2, y2){
     ctx.beginPath();
@@ -185,10 +198,13 @@ export function drawLines(node){
     const elementRect = element.getBoundingClientRect();
     const x = ((elementRect.left + elementRect.right) / 2) - canvas.getBoundingClientRect().left;
     const y = elementRect.bottom - canvas.getBoundingClientRect().top;
+
     if (node.children.length > 0) {
         for (let i = 0; i < node.children.length; i++) {
             const child = document.getElementById(node.children[i].attribute);
+
             if (node.children[i].attribute !== '') {
+                setClassPosition(node.attribute, node.children[i].class);
                 const childRect = child.getBoundingClientRect();
                 const childX = (childRect.left + childRect.right) / 2 - canvas.getBoundingClientRect().left;
                 const childY = childRect.top - canvas.getBoundingClientRect().top;

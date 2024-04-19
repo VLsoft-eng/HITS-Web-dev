@@ -40,9 +40,9 @@ treeContainer.addEventListener('mousemove', (e) => {
     if (!isDragging) return;
     const x = e.pageX - treeContainer.offsetLeft;
     const y = e.pageY - treeContainer.offsetTop;
-    const walkX = x - startX;
-    const walkY = y - startY;
-    treeContainer.scrollLeft = scrollLeft - walkX;
-    treeContainer.scrollTop = scrollTop - walkY;
+    const dragX = x - startX;
+    const dragY = y - startY;
+    treeContainer.scrollLeft = scrollLeft - dragX;
+    treeContainer.scrollTop = scrollTop - dragY;
 });
 

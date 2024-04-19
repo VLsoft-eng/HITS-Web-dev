@@ -49,27 +49,26 @@ inputFileButton.addEventListener('change', function() {
     reader.onload = function(e) {
         const content = e.target.result;
         const lines = content.split('\n');
-        lines[0].split(',').forEach(attribute => attributes.push(attribute.trim()));
-        attributes.forEach(attribute => copyAttributes.push(attribute));
-        for (let i = 1; i < lines.length - 1; i++){
-            let row = [];
-            lines[i].split(',').forEach(elem => row.push(elem.trim()));
-            classMatrix.push(row);
-        }
+        readDataset(lines);
     };
     reader.readAsText(file);
 });
 
-export function readPreparedDataset(dataset){
-    reset();
-    const lines = dataset.split('\n');
-    lines[0].split(',').forEach(attribute => attributes.push(attribute.trim()));
+export function readDataset(dataset){
+    dataset[0].split(',').forEach(attribute => attributes.push(attribute.trim()));
     attributes.forEach(attribute => copyAttributes.push(attribute));
-    for (let i = 1; i < lines.length - 1; i++){
+    for (let i = 1; i < dataset.length - 1; i++){
         let row = [];
-        lines[i].split(',').forEach(elem => row.push(elem.trim()));
+        dataset[i].split(',').forEach(elem => row.push(elem.trim()));
         classMatrix.push(row);
     }
+}
+
+function treeOutput(){
+    result.innerHTML = '';
+    treeHTML.innerHTML = createTreeHtml(root);
+    ctx.reset();
+    drawLines(root);
 }
 
 // Построение дерева
@@ -85,10 +84,8 @@ buildTreeButton.addEventListener('click',function (){
     if (!root || root.children.length === 0) {
         createStructure();
     }
-    result.innerHTML = '';
-    treeHTML.innerHTML = createTreeHtml(root);
-    ctx.reset();
-    drawLines(root);
+    isBypassing = false;
+    treeOutput();
 });
 
 // Удаление всего
@@ -107,7 +104,7 @@ deleteTreeButton.addEventListener('click',function (){
 const startBypassingButton = document.getElementById('start-bypassing');
 startBypassingButton.addEventListener('click', function (){
     if (isBypassing) {
-        alert("Дождитесь завершение обхода");
+        alert("Дождитесь завершения обхода");
         return;
     }
     if (!root || root.children.length === 0 || treeHTML.innerHTML === ''){
@@ -124,8 +121,7 @@ startBypassingButton.addEventListener('click', function (){
         alert("Введите нужное количество решений");
         return;
     }
-    result.innerHTML = ''
-    treeHTML.innerHTML = createTreeHtml(root);
+    treeOutput();
     isBypassing = true;
     treeBypassing(root)
 });
@@ -149,10 +145,6 @@ function createRandomPath(){
         }
     }
     entryField.value = inputPath;
-    result.innerHTML = ''
-    treeHTML.innerHTML = createTreeHtml(root);
-    ctx.reset();
-    drawLines(root);
 }
 
 const createRandomPathButton = document.getElementById('create-random-path');
@@ -162,7 +154,7 @@ createRandomPathButton.addEventListener('click', function (){
         return;
     }
     if (isBypassing) {
-        alert("Дождитесь завершение обхода");
+        alert("Дождитесь завершения обхода");
         return;
     }
     createRandomPath();
@@ -172,6 +164,11 @@ createRandomPathButton.addEventListener('click', function (){
 let inputPath;
 const entryField = document.getElementById('path');
 entryField.addEventListener('input', function() {
+    if (isBypassing){
+        alert("Дождитесь завершения обхода");
+        this.value = inputPath;
+        return;
+    }
     inputPath = this.value;
 });
 
@@ -184,10 +181,7 @@ treeOptimizationButton.addEventListener('click', function () {
     }
     isBypassing = false;
     treeOptimization(root);
-    result.innerHTML = '';
-    treeHTML.innerHTML = createTreeHtml(root);
-    ctx.reset();
-    drawLines(root);
+    treeOutput();
 });
 
 // Слайдер скорости
@@ -196,8 +190,13 @@ const speedValue = document.getElementById('speed-value');
 export let timeout = 500;
 sliderSpeed.addEventListener('input', function (){
     speedValue.innerHTML = sliderSpeed.value;
+    if (timeout === 100000000 && isBypassing){
+        timeout = 1000 - sliderSpeed.value * 10;
+        treeBypassing(root);
+        return;
+    }
     timeout = 1000 - sliderSpeed.value * 10;
-    if(timeout === 2000){
+    if(timeout === 1000){
         timeout = 100000000;
     }
 });
