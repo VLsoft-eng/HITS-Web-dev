@@ -29,7 +29,7 @@ class Ant {
     }
 
     followAnt() {
-        const searchRadius = 25;
+        const searchRadius = 35;
 
         let maxPheromone = -Infinity;
         let maxPheromoneX = this.x;
@@ -68,10 +68,25 @@ class Ant {
             this.x += this.speed * Math.cos(angleToMaxPheromone);
             this.y += this.speed * Math.sin(angleToMaxPheromone);
         }
+
+        if (Math.floor(this.x)>6 && Math.floor(this.y)>6 && Math.floor(this.x)<494 && Math.floor(this.y)<744) {
+            if (map[Math.floor(this.x) - 5][Math.floor(this.y)] === -1) {
+                this.x += 5;
+            }
+            if (map[Math.floor(this.x) + 5][Math.floor(this.y)] === -1) {
+                this.x -=5;
+            }
+            if (map[Math.floor(this.x)][Math.floor(this.y) - 5] === -1) {
+                this.y += 5;
+            }
+            if (map[Math.floor(this.x)][Math.floor(this.y) + 5] === -1) {
+                this.y -= 5;
+            }
+        }
     }
 
     sniffPheromone(){
-        const searchRadius = 30;
+        const searchRadius = 35;
         for (let dx = -searchRadius; dx <= searchRadius; dx++) {
             for (let dy = -searchRadius; dy <= searchRadius; dy++) {
                 const newX = Math.floor(this.x) + dx;
@@ -103,7 +118,7 @@ class Ant {
         if (this.following){this.followAnt();}
         else {this.moveAnt()}
 
-        if (this.timeWithout > 700){
+        if (!this.goHome && (this.timeWithout > 700 && this.class === 'scout' || this.timeWithout > 1500)){
             this.hot = 0;
             this.goHome = true;
         }
@@ -211,7 +226,6 @@ function antAlgorithm(){
     }
     function visualize(){
         if (ants.length === 0){
-            console.log('stopped');
             return;
         }
         for (let i = 0;i<ants.length;i++){

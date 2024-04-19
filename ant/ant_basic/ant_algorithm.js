@@ -1,8 +1,8 @@
 import {slider, antCount, iterateCount, points,draw} from './field.js'
 export {bestPath};
 
-const alpha = 1;
-const beta = 1;
+const alpha = 1.8;
+const beta = 1.4;
 const p = 0.4;
 const q = 240;
 const startPheromone = 0.2;

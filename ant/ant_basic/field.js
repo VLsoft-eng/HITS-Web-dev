@@ -7,8 +7,17 @@ canvas.addEventListener('click', (e) => {
     }
     const x = e.offsetX;
     const y = e.offsetY;
-    points.push({ x, y });
-    draw([],pathColor);
+    let flag = true;
+    for (let i = 0;i<points.length;i++){
+        if (Math.abs(points[i].x-x) < 20 && Math.abs(points[i].y - y) < 20){
+            flag = false;
+        }
+    }
+
+    if (flag) {
+        points.push({x, y});
+        draw([], pathColor);
+    }
 });
 
 function draw(path,color){
