@@ -98,6 +98,7 @@ a{
 }
 
 a:link{
+    justify-content: center;
     margin-right: 20px;
     color: azure;
 }

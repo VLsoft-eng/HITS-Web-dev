@@ -7,8 +7,17 @@ canvas.addEventListener('click', (e) => {
     }
     const x = e.offsetX;
     const y = e.offsetY;
-    points.push({ x, y });
-    draw([],pathColor);
+    let flag = true;
+    for (let i = 0;i<points.length;i++){
+        if (Math.abs(points[i].x-x) < 20 && Math.abs(points[i].y - y) < 20){
+            flag = false;
+        }
+    }
+
+    if (flag) {
+        points.push({x, y});
+        draw([], pathColor);
+    }
 });
 
 function draw(path,color){
@@ -86,6 +95,13 @@ iterateCount.oninput = function() {
     outputIterates.innerHTML = this.value;
 }
 
+let slider = document.getElementById("range");
+let output = document.getElementById("value");
+output.innerHTML = slider.value;
+slider.oninput = function() {
+    output.innerHTML = this.value;
+}
+
 let ctx = canvas.getContext('2d');
 
 let points = [];
@@ -93,7 +109,7 @@ let show = true;
 let bestPath = [];
 let pathColor = 'navajowhite';
 
-export {points, antCount, iterateCount, draw};
+export {slider, points, antCount, iterateCount, draw};
 
 document.getElementById('show').addEventListener('click', showLines)
 document.getElementById('delete').addEventListener('click', clearField);

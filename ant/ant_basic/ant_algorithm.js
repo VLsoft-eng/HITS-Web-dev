@@ -1,8 +1,8 @@
-import {antCount, iterateCount, points,draw} from './field.js'
+import {slider, antCount, iterateCount, points,draw} from './field.js'
 export {bestPath};
 
-const alpha = 1;
-const beta = 4;
+const alpha = 1.8;
+const beta = 1.4;
 const p = 0.4;
 const q = 240;
 const startPheromone = 0.2;
@@ -125,13 +125,13 @@ function antAlgorithm(){
             i++;
             iterate();
             let outputIterates = document.getElementById("iteratesCount");
-            let outputDistance = document.getElementById("shortest-distance-value");
+            let outputDistance = document.getElementById("value-block-value");
             outputDistance.innerHTML = Math.floor(bestPathLength);
             outputIterates.innerHTML = i;
             draw(bestPath,'navajowhite');
             console.log(i);
         }
-        setTimeout(visualize, 0);
+        setTimeout(visualize, (100 - slider.value) * 2);
     }
     visualize();
 }
