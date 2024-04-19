@@ -25,7 +25,7 @@ function sortRoutes() {
     for (let i = 0; i < lenght; i++){
         distances.push(calculateRoute(population[i]));
     }
-    for (let i = 0; i < lenght; i++){
+    for (let i = 0; i < lenght - 1; i++){
         for (let j = i + 1; j < lenght; j++){
             if (distances[i] > distances[j]){
                 [distances[i], distances[j]] = [distances[j], distances[i]];
@@ -34,16 +34,14 @@ function sortRoutes() {
         }
     }
     showShortestDistance(Math.round(distances[0] * 100) / 100);
-    for (let i = 0; i < amountGeneration; i++){
-        population.pop();
-    }
+    population.splice(-(lenght - populationSize));
 }
 
 // Функция мутации
 function mutate(route) {
     let lenght  = route.length;
     let firstIndex = Math.floor(Math.random() * lenght);
-    let secondIndex = firstIndex;
+    let secondIndex = Math.floor(Math.random() * lenght);
     while (firstIndex === secondIndex){
         secondIndex = Math.floor(Math.random() * lenght);
     }
@@ -76,7 +74,13 @@ function evolvePopulation() {
         let firstParent = population[Math.floor(Math.random() * population.length)];
         let secondParent = population[Math.floor(Math.random() * population.length)];
         let child = crossover(firstParent, secondParent);
-        population.push(child);
+        if (!population.includes(child)){
+            population.push(child);
+        } else {
+            if (amountPoints >= 8){
+                i--;
+            }
+        }
     }
 }
 
@@ -115,9 +119,7 @@ function checkPopulationSize(){
         }
     }
     if (lenght > populationSize){
-        for (let i = lenght; i > populationSize; i--){
-            population.pop();
-        }
+        population.splice(-(lenght - populationSize));
     }
 }
 
