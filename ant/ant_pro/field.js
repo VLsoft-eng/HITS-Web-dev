@@ -30,6 +30,12 @@ function draw(e){
                     map[i][j]=-1;
                 }
             }
+            for (let i =  x - 10;i<x+45;i++){
+                for (let j = y - 10;j<y+45;j++){
+                    pheromones[i][j].food = 0;
+                    pheromones[i][j].home = 0;
+                }
+            }
             walls.push({x:x,y:y});
         }
 

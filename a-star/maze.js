@@ -42,7 +42,6 @@ function draw() {
         }
     }
 }
-
 draw();
 
 
@@ -90,11 +89,11 @@ function clearPos() {
 
 // добавление старта и финиша
 function addPos() {
+    lock();
     let startCell = null;
     let finishCell = null;
 
     clearPos();
-
     const cells = document.querySelectorAll('.cell');
     cells.forEach(cell => {
         cell.addEventListener('click', function () {
@@ -106,8 +105,7 @@ function addPos() {
                 finishCell = cell;
                 cell.classList.add('end');
                 cell.classList.remove('wall');
-            } else {
-                return 0;
+                unlock();
             }
         });
     });

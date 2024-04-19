@@ -131,6 +131,7 @@ function prima() {
         setTimeout(visualizePrima, 100 - slider.value);
     }
     visualizePrima();
+    clearInterval(visualizePrima);
 }
 
 let add = 0;

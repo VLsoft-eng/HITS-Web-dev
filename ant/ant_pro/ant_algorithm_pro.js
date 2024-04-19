@@ -1,4 +1,5 @@
 import{slider,drawMap,antCount,colonyPos} from "./field.js";
+const searchRadius = 35;
 
 class Pheromone {
     constructor(){
@@ -29,8 +30,6 @@ class Ant {
     }
 
     followAnt() {
-        const searchRadius = 35;
-
         let maxPheromone = -Infinity;
         let maxPheromoneX = this.x;
         let maxPheromoneY = this.y;
@@ -38,19 +37,21 @@ class Ant {
 
         for (let dx = -searchRadius; dx <= searchRadius; dx++) {
             for (let dy = -searchRadius; dy <= searchRadius; dy++) {
-                const newX = Math.floor(this.x) + dx;
-                const newY = Math.floor(this.y) + dy;
+                let newX = Math.floor(this.x) + dx;
+                let newY = Math.floor(this.y) + dy;
 
                 if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
                     if (this.goHome) {
-                        const currentPheromone = pheromones[newX][newY].home;
+                        let currentPheromone = pheromones[newX][newY].home;
+
                         if (currentPheromone > maxPheromone && currentPheromone !== 0 && pheromones[newX][newY].family === this.nation) {
                             maxPheromone = currentPheromone;
                             maxPheromoneX = newX;
                             maxPheromoneY = newY;
                         }
                     } else {
-                        const currentPheromone = pheromones[newX][newY].food;
+                        let currentPheromone = pheromones[newX][newY].food;
+
                         if (currentPheromone > maxPheromone && currentPheromone !== 0 && pheromones[newX][newY].family === this.nation) {
                             maxPheromone = currentPheromone;
                             maxPheromoneX = newX;
@@ -64,11 +65,12 @@ class Ant {
         if (maxPheromone === -Infinity || rnd < 0.1) {
             this.moveAnt();
         } else {
-            const angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
+            let angleToMaxPheromone = Math.atan2(maxPheromoneY - this.y, maxPheromoneX - this.x);
             this.x += this.speed * Math.cos(angleToMaxPheromone);
             this.y += this.speed * Math.sin(angleToMaxPheromone);
         }
 
+        // избегание стенок при следовании
         if (Math.floor(this.x)>6 && Math.floor(this.y)>6 && Math.floor(this.x)<494 && Math.floor(this.y)<744) {
             if (map[Math.floor(this.x) - 5][Math.floor(this.y)] === -1) {
                 this.x += 5;
@@ -86,11 +88,10 @@ class Ant {
     }
 
     sniffPheromone(){
-        const searchRadius = 35;
         for (let dx = -searchRadius; dx <= searchRadius; dx++) {
             for (let dy = -searchRadius; dy <= searchRadius; dy++) {
-                const newX = Math.floor(this.x) + dx;
-                const newY = Math.floor(this.y) + dy;
+                let newX = Math.floor(this.x) + dx;
+                let newY = Math.floor(this.y) + dy;
                 if (newX >= 0 && newX < 750 && newY >= 0 && newY < 500) {
                     if (this.goHome) {
                         if (pheromones[newX][newY].home > 0 && pheromones[newX][newY].family === this.nation) {
@@ -112,7 +113,9 @@ class Ant {
 
         // мувы муравьишки
         if (this.hot < 0.001){this.hot = 0;}
+
         if (this.sniffPheromone()){this.following =true;}
+
         if (this.class === 'scout' && !this.goHome){this.following = false;}
 
         if (this.following){this.followAnt();}
@@ -189,8 +192,10 @@ class Ant {
 
 function reset(){
     ants = [];
+
     for (let i = 0;i<750;i++){
         pheromones[i]=[];
+
         for (let j = 0; j < 500; j++) {
             pheromones[i][j] = new Pheromone();
         }
@@ -199,9 +204,11 @@ function reset(){
 
 function mapInit(){
     ants = [];
+
     for (let i = 0;i<750;i++){
         pheromones[i]=[];
         map[i]=[];
+
         for (let j = 0; j < 500; j++) {
             pheromones[i][j] = new Pheromone();
         }
@@ -213,12 +220,15 @@ function antAlgorithm(){
         isStarted = false;
         return;
     }
+
     if (colonyPos.length === 0) {alert('Поставьте колонию'); return;}
+
     isStarted = true;
     // создание муравьев
     for (let i = 0;i <colonyPos.length;i++) {
         for (let j = 0; j < antCount.value/colonyPos.length; j++) {
             ants.push(new Ant(colonyPos[i].x, colonyPos[i].y,i));
+
             if (j < antCount.value/colonyPos.length/5){
                 ants[ants.length - 1].class = 'scout';
             }
@@ -228,18 +238,23 @@ function antAlgorithm(){
         if (ants.length === 0){
             return;
         }
+
         for (let i = 0;i<ants.length;i++){
             ants[i].updateAnt();
+
             if (ants[i].timeWithout > 2000){
                 ants.splice(i,1);
             }
         }
+
+        // вывод информации на экран
         drawMap(ants);
         let outputDistance = document.getElementById("value-block-value");
         outputDistance.innerHTML = Math.floor(ants.length);
         setTimeout(visualize,100-slider.value);
     }
     visualize();
+    clearInterval(visualize);
 }
 let map = [];
 let pheromones = [];

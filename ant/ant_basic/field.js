@@ -1,4 +1,5 @@
 const canvas = document.getElementById('field');
+let ctx = canvas.getContext('2d');
 
 canvas.addEventListener('click', (e) => {
     if (points.length >= 50){
@@ -19,6 +20,14 @@ canvas.addEventListener('click', (e) => {
         draw([], pathColor);
     }
 });
+
+function lock(){
+    document.getElementById('start').disabled = true;
+}
+
+function  unlock(){
+    document.getElementById('start').disabled = false;
+}
 
 function draw(path,color){
     pathColor = color;
@@ -78,6 +87,7 @@ function clearField() {
     bestPath.splice(0);
     pathColor = 'navajowhite';
     outputIterates.innerHTML = iterateCount.value;
+    unlock();
 }
 
 //слайдеры
@@ -102,14 +112,12 @@ slider.oninput = function() {
     output.innerHTML = this.value;
 }
 
-let ctx = canvas.getContext('2d');
-
 let points = [];
 let show = true;
 let bestPath = [];
 let pathColor = 'navajowhite';
 
-export {slider, points, antCount, iterateCount, draw};
+export {slider, points, antCount, iterateCount, draw, lock, unlock};
 
 document.getElementById('show').addEventListener('click', showLines)
 document.getElementById('delete').addEventListener('click', clearField);

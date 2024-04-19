@@ -12,6 +12,7 @@ class Node {
 
 function showPath(path, cells, N) {
     path.reverse();
+
     let i = 0;
     function visualize() {
         if (i < path.length - 1) {
@@ -31,8 +32,10 @@ function showPath(path, cells, N) {
 function matrixInit(mazeMatrix,cells) {
     let start;
     let end;
+
     for (let i = 0; i < size.value; i++) {
         mazeMatrix[i] = [];
+
         for (let j = 0; j < size.value; j++) {
             mazeMatrix[i][j] = new Node();
 
@@ -77,7 +80,7 @@ function a_star() {
 
     function visualizeAlg() {
         if (queue.length === 0) {
-            alert("Пути Нед!1!!1!");
+            alert("Пути Нет!1!!1!");
             unlock();
             return 0;
         } else if (queue.length > 0) {
@@ -153,6 +156,7 @@ function a_star() {
         setTimeout(visualizeAlg, 100 - slider.value);
     }
     visualizeAlg();
+    clearInterval(visualizeAlg);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
