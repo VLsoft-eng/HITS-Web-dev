@@ -71,10 +71,12 @@ function a_star() {
     let visited = [];
     for (let i = 0;i< size.value;i++){
         visited[i]=[];
+
         for (let j =0;j< size.value;j++){
             visited[i][j] = 0;
         }
     }
+
     let queue = [];
     queue.push(start);
 
