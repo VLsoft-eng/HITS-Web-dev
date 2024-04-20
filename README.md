@@ -4,5 +4,5 @@
 - Муравьиный алгоритм
 - Нейронная сеть перцептрон
 - Дерево решений
-- А-зведа
-link: https://mikhaylov1gor.github.io/hosting/
+- А-звезда
+- link: https://mikhaylov1gor.github.io/hosting/
